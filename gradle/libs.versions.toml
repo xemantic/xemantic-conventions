@@ -8,8 +8,11 @@ jreleaserPlugin = "1.16.0"
 
 binaryCompatibilityValidatorPlugin = "0.17.0"
 
+mockk = "1.13.16"
+
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 
 [plugins]
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokkaPlugin" }

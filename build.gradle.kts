@@ -47,6 +47,7 @@ tasks {
     }
 
     project.tasks.withType<Test> {
+        useJUnitPlatform()
         testLogging {
             events(
                 TestLogEvent.SKIPPED,
@@ -61,4 +62,5 @@ tasks {
 
 dependencies {
     testImplementation(libs.kotlin.test)
+    testImplementation(libs.mockk)
 }
