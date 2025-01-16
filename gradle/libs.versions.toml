@@ -1,6 +1,6 @@
 [versions]
 java = "17"
-kotlin = "2.1.0"
+kotlin = "2.0.21" # the highest version supported by the plugin at the moment
 
 versionsPlugin = "0.51.0"
 dokkaPlugin = "2.0.0"

@@ -1,0 +1,78 @@
+public final class com/xemantic/gradle/Developer {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/xemantic/gradle/Developer;
+	public static synthetic fun copy$default (Lcom/xemantic/gradle/Developer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/xemantic/gradle/Developer;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEmail ()Ljava/lang/String;
+	public final fun getId ()Ljava/lang/String;
+	public final fun getName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/xemantic/gradle/JarsKt {
+	public static final fun populateJarManifest (Lorg/gradle/api/tasks/bundling/Jar;Ljava/lang/String;Lorg/gradle/api/Project;Ljava/lang/String;)V
+}
+
+public final class com/xemantic/gradle/License : java/lang/Enum {
+	public static final field APACHE Lcom/xemantic/gradle/License;
+	public static final field GPL Lcom/xemantic/gradle/License;
+	public static final field LGPL Lcom/xemantic/gradle/License;
+	public final fun getId ()Ljava/lang/String;
+	public final fun getSpxdx ()Ljava/lang/String;
+	public final fun getUrl ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lcom/xemantic/gradle/License;
+	public static fun values ()[Lcom/xemantic/gradle/License;
+}
+
+public final class com/xemantic/gradle/PomsKt {
+	public static final fun setUpGitHubPomDetails (Lorg/gradle/api/publish/maven/MavenPom;Ljava/lang/String;Ljava/lang/String;Lcom/xemantic/gradle/XemanticGradleExtension;)V
+}
+
+public final class com/xemantic/gradle/TestLoggingKt {
+	public static final fun xemanticTestLogging (Lorg/gradle/api/tasks/testing/Test;)V
+}
+
+public abstract class com/xemantic/gradle/UpdateVersionInReadme : org/gradle/api/DefaultTask {
+	public fun <init> ()V
+	public final fun action ()V
+}
+
+public abstract class com/xemantic/gradle/XemanticGradleExtension {
+	public fun <init> (I)V
+	public final fun developer (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public final fun getCopyright ()Ljava/lang/String;
+	public final fun getDescription ()Ljava/lang/String;
+	public final fun getDevelopers ()Ljava/util/List;
+	public final fun getGitHubAccount ()Ljava/lang/String;
+	public final fun getInceptionYear ()Ljava/lang/Integer;
+	public final fun getLicense ()Lcom/xemantic/gradle/License;
+	public final fun getVendor ()Ljava/lang/String;
+	public final fun getVendorUrl ()Ljava/lang/String;
+	public final fun setDescription (Ljava/lang/String;)V
+	public final fun setGitHubAccount (Ljava/lang/String;)V
+	public final fun setInceptionYear (Ljava/lang/Integer;)V
+	public final fun setLicense (Lcom/xemantic/gradle/License;)V
+	public final fun setVendor (Ljava/lang/String;)V
+	public final fun setVendorUrl (Ljava/lang/String;)V
+	public final fun validate ()V
+}
+
+public final class com/xemantic/gradle/XemanticGradlePlugin : org/gradle/api/Plugin {
+	public fun <init> ()V
+	public synthetic fun apply (Ljava/lang/Object;)V
+	public fun apply (Lorg/gradle/api/Project;)V
+}
+
+public final class com/xemantic/gradle/XemanticGradlePlugin$inlined$sam$i$org_gradle_api_Action$0 : org/gradle/api/Action {
+	public fun <init> (Lkotlin/jvm/functions/Function1;)V
+	public final synthetic fun execute (Ljava/lang/Object;)V
+}
+
+public final class com/xemantic/gradle/XemanticGradlePluginKt {
+	public static final fun getXemantic (Lorg/gradle/api/Project;)Lcom/xemantic/gradle/XemanticGradleExtension;
+}
+

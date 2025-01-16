@@ -1,3 +1,5 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -37,11 +39,24 @@ kotlin {
 }
 
 tasks {
-    compileJava {
-        options.release = javaTarget.toInt()
+
+    withType<JavaCompile> {
+        options.release.set(javaTarget.toInt())
         targetCompatibility = javaTarget
         sourceCompatibility = javaTarget
     }
+
+    project.tasks.withType<Test> {
+        testLogging {
+            events(
+                TestLogEvent.SKIPPED,
+                TestLogEvent.FAILED
+            )
+            showStackTraces = true
+            exceptionFormat = TestExceptionFormat.FULL
+        }
+    }
+
 }
 
 dependencies {
