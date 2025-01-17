@@ -16,24 +16,22 @@
 
 package com.xemantic.gradle.conventions
 
-import org.gradle.api.tasks.testing.Test
-import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-import org.gradle.api.tasks.testing.logging.TestLogEvent
+private val DEPENDENCY_REGEX = """"([^:]+:[^:]+(?:-[^:]+)?):([^:"]+)(?::([^"]+))?"""".toRegex()
 
-/**
- * Rules for logging of tests.
- *
- * Note: the principle - we only want to log what's failing. The logs should be
- * convenient for digestion of not only a human, but also an AI agent performing the
- * build and the analysis of possible build failures.
- */
-fun Test.xemanticTestLogging() {
-    testLogging {
-        events(
-            TestLogEvent.SKIPPED,
-            TestLogEvent.FAILED
-        )
-        showStackTraces = true
-        exceptionFormat = TestExceptionFormat.FULL
+fun String.replaceGradleDependencyVersion(
+    artifact: String,
+    newVersion: String
+): String {
+    return replace(DEPENDENCY_REGEX) { matchResult ->
+        val (fullMatch, matchedArtifact, _, classifier) = matchResult.groupValues
+        if (matchedArtifact.startsWith(artifact)) {
+            if (classifier.isEmpty()) {
+                """"$matchedArtifact:$newVersion""""
+            } else {
+                """"$matchedArtifact:$newVersion:$classifier""""
+            }
+        } else {
+            fullMatch
+        }
     }
 }

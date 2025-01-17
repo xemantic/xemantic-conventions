@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.xemantic.gradle
+package com.xemantic.gradle.conventions
 
 /**
  * The list of open source licenses which can be used by xemantic projects.

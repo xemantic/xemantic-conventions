@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.xemantic.gradle
+package com.xemantic.gradle.conventions
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException

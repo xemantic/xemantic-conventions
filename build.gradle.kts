@@ -13,19 +13,21 @@ plugins {
     alias(libs.plugins.binary.compatibility.validator)
 }
 
-repositories {
-    mavenCentral()
-}
+group = "com.xemantic.gradle"
 
 gradlePlugin {
     website = "https://github.com/xemantic/xemantic-gradle-plugin"
     vcsUrl = "https://github.com/xemantic/xemantic-gradle-plugin.git"
     plugins {
         create("xemantic-conventions") {
-            id = "com.xemantic.gradle.xemantic-conventions"
+            id = "$group.xemantic-conventions"
             implementationClass = "com.xemantic.gradle.conventions.XemanticGradlePlugin"
         }
     }
+}
+
+repositories {
+    mavenCentral()
 }
 
 val javaTarget = libs.versions.java.get()
