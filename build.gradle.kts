@@ -21,9 +21,9 @@ gradlePlugin {
     website = "https://github.com/xemantic/xemantic-gradle-plugin"
     vcsUrl = "https://github.com/xemantic/xemantic-gradle-plugin.git"
     plugins {
-        create("xemantic-gradle-plugin") {
-            id = "com.xemantic.gradle.xemantic-gradle-plugin"
-            implementationClass = "com.xemantic.gradle.XemanticGradlePlugin"
+        create("xemantic-conventions") {
+            id = "com.xemantic.gradle.xemantic-conventions"
+            implementationClass = "com.xemantic.gradle.conventions.XemanticGradlePlugin"
         }
     }
 }
