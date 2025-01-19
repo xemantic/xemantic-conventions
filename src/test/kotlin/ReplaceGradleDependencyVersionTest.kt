@@ -30,7 +30,7 @@ class ReplaceGradleDependencyVersionTest {
         val expected = """
             dependencies {
                 implementation("com.example:my-project:1.1")
-             }
+            }
         """.trimIndent()
         assert(input.replaceGradleDependencyVersion("com.example:my-project", "1.1") == expected)
     }
@@ -45,7 +45,7 @@ class ReplaceGradleDependencyVersionTest {
         val expected = """
             dependencies {
                 implementation("com.example:my-project:1.0.1")
-             }
+            }
         """.trimIndent()
         assert(input.replaceGradleDependencyVersion("com.example:my-project", "1.0.1") == expected)
     }
@@ -60,7 +60,7 @@ class ReplaceGradleDependencyVersionTest {
         val expected = """
             dependencies {
                 implementation("com.example:my-project:1.1")
-             }
+            }
         """.trimIndent()
         assert(input.replaceGradleDependencyVersion("com.example:my-project", "1.1") == expected)
     }
@@ -75,7 +75,7 @@ class ReplaceGradleDependencyVersionTest {
         val expected = """
             dependencies {
                 implementation("com.example:my-project:1.0.1")
-             }
+            }
         """.trimIndent()
         assert(input.replaceGradleDependencyVersion("com.example:my-project", "1.0.1") == expected)
     }
@@ -93,6 +93,21 @@ class ReplaceGradleDependencyVersionTest {
             }
         """.trimIndent()
         assert(input.replaceGradleDependencyVersion("com.example:my-project", "2.0.1") == expected)
+    }
+
+    @Test
+    fun `should replace Gradle dependency version for a full semantic version with only major version release`() {
+        val input = """
+            dependencies {
+                implementation("com.example:my-project:1.2.3")
+            }
+        """.trimIndent()
+        val expected = """
+            dependencies {
+                implementation("com.example:my-project:2")
+            }
+        """.trimIndent()
+        assert(input.replaceGradleDependencyVersion("com.example:my-project", "2") == expected)
     }
 
     @Test
@@ -194,3 +209,4 @@ class ReplaceGradleDependencyVersionTest {
     }
 
 }
+

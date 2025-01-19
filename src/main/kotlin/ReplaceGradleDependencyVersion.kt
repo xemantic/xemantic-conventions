@@ -16,22 +16,31 @@
 
 package com.xemantic.gradle.conventions
 
-private val DEPENDENCY_REGEX = """"([^:]+:[^:]+(?:-[^:]+)?):([^:"]+)(?::([^"]+))?"""".toRegex()
-
+/**
+ * Replaces the version of a Gradle dependency in a string.
+ *
+ * This function finds and replaces the version of a specified artifact in a Gradle dependency string.
+ * It supports artifacts with variants and classifiers.
+ *
+ * Example:
+ * ```
+ * val originalString = """implementation "com.example:library:1.0.0""""
+ * val updatedString = originalString.replaceGradleDependencyVersion("com.example:library", "2.0.0")
+ * // updatedString will be: """implementation "com.example:library:2.0.0""""
+ * ```
+ *
+ * @param artifact The name of the artifact to update.
+ * @param newVersion The new version to set for the artifact.
+ * @return A new string with the updated version for the specified artifact.
+ */
 fun String.replaceGradleDependencyVersion(
     artifact: String,
     newVersion: String
 ): String {
-    return replace(DEPENDENCY_REGEX) { matchResult ->
-        val (fullMatch, matchedArtifact, _, classifier) = matchResult.groupValues
-        if (matchedArtifact.startsWith(artifact)) {
-            if (classifier.isEmpty()) {
-                """"$matchedArtifact:$newVersion""""
-            } else {
-                """"$matchedArtifact:$newVersion:$classifier""""
-            }
-        } else {
-            fullMatch
-        }
+    val regex = """"$artifact(-[^:]*)?:([^":]+)(:([^"]+))?"""".toRegex()
+    return this.replace(regex) { matchResult ->
+        val (variant, _, _, classifier) = matchResult.destructured
+        val classifierPart = if (classifier.isNotEmpty()) ":$classifier" else ""
+        """"$artifact$variant:$newVersion$classifierPart""""
     }
 }
