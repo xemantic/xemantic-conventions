@@ -1,5 +1,5 @@
 name: Build main
-description: builds than main branch, and then deploys SNAPSHOT versions to GitHub Packages
+description: Builds than main branch, and then deploys SNAPSHOT versions to GitHub Packages
 
 on:
   push:
