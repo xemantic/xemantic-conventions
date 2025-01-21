@@ -219,8 +219,6 @@ jreleaser {
 }
 
 signing {
-    println("Signing key $signingKey")
-    println("Signing password $signingPassword")
     useInMemoryPgpKeys(
         signingKey,
         signingPassword
