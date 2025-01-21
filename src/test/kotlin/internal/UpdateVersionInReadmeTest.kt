@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package com.xemantic.gradle.conventions
+package com.xemantic.gradle.conventions.internal
 
+import com.xemantic.kotlin.test.have
+import com.xemantic.kotlin.test.should
+import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import io.mockk.mockk
-import io.mockk.verify
-import org.gradle.api.GradleException
 import java.io.File
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class UpdateVersionInReadmeTest {
@@ -35,9 +34,8 @@ class UpdateVersionInReadmeTest {
 
     private lateinit var project: Project
     private lateinit var task: UpdateVersionInReadme
-    private lateinit var log: (String) -> Unit
 
-    @BeforeTest
+    @BeforeEach
     fun setup() {
         project = ProjectBuilder.builder()
             .withProjectDir(testProjectDir)
@@ -45,11 +43,9 @@ class UpdateVersionInReadmeTest {
             .build()
         project.group = "com.example"
         project.version = "1.0.1"
-        log = mockk(relaxed = true)
         task = project.tasks.register(
             "updateVersionInReadme",
-            UpdateVersionInReadme::class.java,
-            log
+            UpdateVersionInReadme::class.java
         ).get()
     }
 
@@ -72,7 +68,7 @@ class UpdateVersionInReadmeTest {
 
         // then
         val updatedContent = readme.readText()
-        assertEquals("""
+        assert("""
             # My Project
             
             ```kotlin
@@ -80,19 +76,11 @@ class UpdateVersionInReadmeTest {
                 implementation("com.example:my-project:1.0.1")
             }
             ```
-        """.trimIndent(), updatedContent)
-
-        verify {
-            log(
-                "Successfully updated version in README.md to 1.0.1"
-            )
-        }
-
-
+        """.trimIndent() == updatedContent)
     }
 
     @Test
-    fun `should not update version in README when already correct`() {
+    fun `should fail when version in README is already correct`() {
         val readme = File(testProjectDir, "README.md")
         readme.writeText("""
             # My Project
@@ -104,28 +92,19 @@ class UpdateVersionInReadmeTest {
             ```
         """.trimIndent())
 
-        task.action()
-
-        val updatedContent = readme.readText()
-        assertEquals("""
-            # My Project
-            
-            ```kotlin
-            dependencies {
-                implementation("com.example:my-project:1.0.1")
-            }
-            ```
-        """.trimIndent(), updatedContent)
-
-        verify {
-            log(
-                "No update needed. Version in README.md is already 1.0.1"
+        assertFailsWith<GradleException> {
+            task.action()
+        } should {
+            have(
+                message == "Dependency is either already the most recent version, " +
+                        "or no matching dependency reference found in README.md. " +
+                        "Expected format: com.example:my-project[-platform]:x.y.z[:classifier]"
             )
         }
     }
 
     @Test
-    fun `should log warning when no match found in README`() {
+    fun `should fail when no match is found in README`() {
         val readme = File(testProjectDir, "README.md")
         readme.writeText("""
             # My Project
@@ -133,20 +112,24 @@ class UpdateVersionInReadmeTest {
             This is a sample project.
         """.trimIndent())
 
-        task.action()
-
-        verify {
-            log("No matching dependency reference found in README.md. " +
-                "Expected format: com.example:my-project:x.y.z")
+        assertFailsWith<GradleException> {
+            task.action()
+        } should {
+            have(
+                message == "Dependency is either already the most recent version, " +
+                        "or no matching dependency reference found in README.md. " +
+                        "Expected format: com.example:my-project[-platform]:x.y.z[:classifier]"
+            )
         }
     }
 
     @Test
     fun `should fail when README file not found`() {
-        val exception = assertFailsWith<GradleException> {
+        assertFailsWith<GradleException> {
             task.action()
+        } should {
+            have(message == "README.md file not found in the project root directory.")
         }
-        assert(exception.message == "README.md file not found in the project root directory.")
     }
 
 }
