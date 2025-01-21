@@ -201,6 +201,8 @@ jreleaser {
 }
 
 signing {
+    println("Signing key ${xemantic.signingKey}")
+    println("Signing password ${xemantic.signingPassword}")
     useInMemoryPgpKeys(
         xemantic.signingKey,
         xemantic.signingPassword
