@@ -62,7 +62,7 @@ class Xemantic {
             .withZoneSameInstant(ZoneOffset.UTC)
             .format(TIMESTAMP_FORMATTER)
 
-    val isReleaseBuild: Boolean = (project.version as String).endsWith("-SNAPSHOT")
+    val isReleaseBuild: Boolean = !(version as String).endsWith("-SNAPSHOT")
 }
 
 val xemantic = Xemantic()
@@ -313,8 +313,8 @@ tasks.withType<Test> {
     xemanticTestLogging()
 }
 
-
 if (xemantic.isReleaseBuild) {
+    logger.lifecycle("Creating jreleaser dir")
     // fixes https://github.com/jreleaser/jreleaser/issues/1292
     layout.buildDirectory.dir("jreleaser").get().asFile.mkdir()
     xemantic.stagingDeployDir.mkdirs()

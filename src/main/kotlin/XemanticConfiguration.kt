@@ -64,7 +64,7 @@ public abstract class XemanticConfiguration @Inject constructor(
 
     public val authorIds: List<String> = developers.map { it.id }
 
-    public val isReleaseBuild: Boolean = (project.version as String).endsWith("-SNAPSHOT")
+    public val isReleaseBuild: Boolean = !(project.version as String).endsWith("-SNAPSHOT")
 
     public val releasePageUrl: String =
         "https://github.com/$gitHubAccount/${project.rootProject.name}/releases/tag/v${project.version}"
