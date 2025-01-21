@@ -1,5 +1,5 @@
 # xemantic-gradle-plugin
-Sets up standard gradle conventions for Xemantic projects
+Sets up standard gradle conventions for [Xemantic](https://github.com/xemantic)'s 
 
 ## Why?
 
