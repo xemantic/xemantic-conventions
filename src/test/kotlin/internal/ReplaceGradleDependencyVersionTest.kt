@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.xemantic.gradle.conventions
+package com.xemantic.gradle.conventions.internal
 
 import kotlin.test.Test
 
@@ -209,4 +209,3 @@ class ReplaceGradleDependencyVersionTest {
     }
 
 }
-
