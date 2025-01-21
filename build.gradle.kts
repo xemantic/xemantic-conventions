@@ -23,6 +23,11 @@ plugins {
 
 group = "com.xemantic.gradle"
 
+val githubActor: String? by project
+val githubToken: String? by project
+val signingKey: String? by project
+val signingPassword: String? by project
+
 val TIMESTAMP_FORMATTER = DateTimeFormatter.ofPattern(
     "uuuu-MM-dd'T'HH:mm:ss'Z'"
 )
@@ -48,9 +53,6 @@ class Xemantic {
             pom { xemanticPomInPublication(project) }
         }
     }
-
-    val signingKey: String? by project
-    val signingPassword: String? by project
 
     private val now = LocalDateTime.now()
 
@@ -155,6 +157,22 @@ publishing {
             xemantic.configurePom(this)
         }
     }
+    repositories {
+        if (xemantic.isReleaseBuild) {
+            maven {
+                url = xemantic.stagingDeployDir.toURI()
+            }
+        } else {
+            maven {
+                name = "GitHubPackages"
+                setUrl("https://maven.pkg.github.com/${xemantic.gitHubAccount}/${rootProject.name}")
+                credentials {
+                    username = githubActor
+                    password = githubToken
+                }
+            }
+        }
+    }
 }
 
 jreleaser {
@@ -201,11 +219,11 @@ jreleaser {
 }
 
 signing {
-    println("Signing key ${xemantic.signingKey}")
-    println("Signing password ${xemantic.signingPassword}")
+    println("Signing key $signingKey")
+    println("Signing password $signingPassword")
     useInMemoryPgpKeys(
-        xemantic.signingKey,
-        xemantic.signingPassword
+        signingKey,
+        signingPassword
     )
     sign(publishing.publications)
 }
