@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.xemantic.gradle.conventions
+package com.xemantic.gradle.conventions.internal
 
 /**
  * Replaces the version of a Gradle dependency in a string.
@@ -33,14 +33,13 @@ package com.xemantic.gradle.conventions
  * @param newVersion The new version to set for the artifact.
  * @return A new string with the updated version for the specified artifact.
  */
-fun String.replaceGradleDependencyVersion(
+internal fun String.replaceGradleDependencyVersion(
     artifact: String,
     newVersion: String
-): String {
-    val regex = """"$artifact(-[^:]*)?:([^":]+)(:([^"]+))?"""".toRegex()
-    return this.replace(regex) { matchResult ->
-        val (variant, _, _, classifier) = matchResult.destructured
-        val classifierPart = if (classifier.isNotEmpty()) ":$classifier" else ""
-        """"$artifact$variant:$newVersion$classifierPart""""
-    }
+): String = replace(
+    """"$artifact(-[^:]*)?:([^":]+)(:([^"]+))?"""".toRegex()
+) { matchResult ->
+    val (variant, _, _, classifier) = matchResult.destructured
+    val classifierPart = if (classifier.isNotEmpty()) ":$classifier" else ""
+    """"$artifact$variant:$newVersion$classifierPart""""
 }

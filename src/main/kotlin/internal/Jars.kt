@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package com.xemantic.gradle.conventions
+package com.xemantic.gradle.conventions.internal
 
+import com.xemantic.gradle.conventions.xemantic
 import org.gradle.api.Project
 import org.gradle.api.tasks.bundling.Jar
 
 /**
- * Each JAR file has also a manifest, and the manifest can contain additional
- * information related to the vendor and the build.
+ * Populates JAR manifest with Xemantic-specific and build specific attributes.
+ *
+ * @param project the gradle project.
  */
 internal fun Jar.populateJarManifest(
     project: Project,

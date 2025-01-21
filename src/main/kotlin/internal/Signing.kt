@@ -14,12 +14,19 @@
  * limitations under the License.
  */
 
-package com.xemantic.gradle.conventions
+package com.xemantic.gradle.conventions.internal
 
+import com.xemantic.gradle.conventions.XemanticConfiguration
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.plugins.signing.SigningExtension
 
-public fun SigningExtension.xemanticSigning(
+/**
+ * Configures signing of maven publications.
+ *
+ * @param xemantic the Xemantic configuration instance.
+ * @param publishing the publishing gradle extension to retrieve publication list from.
+ */
+internal fun SigningExtension.xemanticSigning(
     xemantic: XemanticConfiguration,
     publishing: PublishingExtension
 ) {

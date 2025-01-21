@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.xemantic.gradle.conventions
+package com.xemantic.gradle.conventions.internal
 
 import org.gradle.api.tasks.testing.Test
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
@@ -27,7 +27,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
  * convenient for digestion of not only a human, but also an AI agent performing the
  * build and the analysis of possible build failures.
  */
-fun Test.xemanticTestLogging() {
+internal fun Test.xemanticTestLogging() {
     testLogging {
         events(
             TestLogEvent.SKIPPED,
