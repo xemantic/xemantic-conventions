@@ -19,10 +19,11 @@ package com.xemantic.gradle.conventions
 /**
  * The list of open source licenses which can be used by xemantic projects.
  */
-enum class License(
-    val id: String,
-    val url: String,
-    val spxdx: String
+@Suppress("unused")
+public enum class License(
+    public val id: String,
+    public val url: String,
+    public val spxdx: String
 ) {
     APACHE(
         id = "The Apache Software License, Version 2.0",
