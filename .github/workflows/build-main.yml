@@ -23,7 +23,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4.2.2
 
       - name: Build
-        run: ./gradlew build sourcesJar dokkaGeneratePublicationHtml publish
+        run: ./gradlew build sourcesJar dokkaGeneratePublicationHtml sign publish
         env:
           ORG_GRADLE_PROJECT_githubActor: ${{ secrets.GITHUBACTOR }}
           ORG_GRADLE_PROJECT_githubToken: ${{ secrets.GITHUBTOKEN }}
