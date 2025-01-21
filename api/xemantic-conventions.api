@@ -13,10 +13,6 @@ public final class com/xemantic/gradle/conventions/Developer {
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class com/xemantic/gradle/conventions/JarsKt {
-	public static final fun populateJarManifest (Lorg/gradle/api/tasks/bundling/Jar;Ljava/lang/String;Lorg/gradle/api/Project;Ljava/lang/String;)V
-}
-
 public final class com/xemantic/gradle/conventions/License : java/lang/Enum {
 	public static final field APACHE Lcom/xemantic/gradle/conventions/License;
 	public static final field GPL Lcom/xemantic/gradle/conventions/License;
@@ -28,55 +24,65 @@ public final class com/xemantic/gradle/conventions/License : java/lang/Enum {
 	public static fun values ()[Lcom/xemantic/gradle/conventions/License;
 }
 
-public final class com/xemantic/gradle/conventions/PomsKt {
-	public static final fun setUpGitHubPomDetails (Lorg/gradle/api/publish/maven/MavenPom;Ljava/lang/String;Ljava/lang/String;Lcom/xemantic/gradle/conventions/XemanticGradleExtension;)V
+public final class com/xemantic/gradle/conventions/PublishingKt {
+	public static final fun xemanticPom (Lorg/gradle/api/publish/maven/MavenPublication;Lorg/gradle/api/Project;)V
 }
 
-public final class com/xemantic/gradle/conventions/ReplaceGradleDependencyVersionKt {
-	public static final fun replaceGradleDependencyVersion (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
-}
-
-public final class com/xemantic/gradle/conventions/TestLoggingKt {
-	public static final fun xemanticTestLogging (Lorg/gradle/api/tasks/testing/Test;)V
-}
-
-public abstract class com/xemantic/gradle/conventions/UpdateVersionInReadme : org/gradle/api/DefaultTask {
-	public fun <init> (Lkotlin/jvm/functions/Function1;)V
-	public final fun action ()V
-}
-
-public abstract class com/xemantic/gradle/conventions/XemanticGradleExtension {
-	public fun <init> (I)V
+public abstract class com/xemantic/gradle/conventions/XemanticConfiguration {
+	public fun <init> (Lorg/gradle/api/Project;)V
+	public final fun configurePom (Lorg/gradle/api/publish/maven/MavenPublication;)V
 	public final fun developer (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public final fun getAuthorIds ()Ljava/util/List;
+	public final fun getBuildTime ()Ljava/lang/String;
 	public final fun getCopyright ()Ljava/lang/String;
 	public final fun getDescription ()Ljava/lang/String;
 	public final fun getDevelopers ()Ljava/util/List;
+	public final fun getDocumentationUrl ()Ljava/lang/String;
 	public final fun getGitHubAccount ()Ljava/lang/String;
+	public final fun getGithubActor ()Ljava/lang/String;
+	public final fun getGithubToken ()Ljava/lang/String;
+	public final fun getHomepageUrl ()Ljava/lang/String;
 	public final fun getInceptionYear ()Ljava/lang/Integer;
 	public final fun getLicense ()Lcom/xemantic/gradle/conventions/License;
+	public final fun getReleasePageUrl ()Ljava/lang/String;
+	public final fun getSigningKey ()Ljava/lang/String;
+	public final fun getSigningPassword ()Ljava/lang/String;
+	public final fun getStagingDeployDir ()Ljava/io/File;
 	public final fun getVendor ()Ljava/lang/String;
 	public final fun getVendorUrl ()Ljava/lang/String;
+	public final fun isReleaseBuild ()Z
 	public final fun setDescription (Ljava/lang/String;)V
 	public final fun setGitHubAccount (Ljava/lang/String;)V
 	public final fun setInceptionYear (Ljava/lang/Integer;)V
 	public final fun setLicense (Lcom/xemantic/gradle/conventions/License;)V
+	public final fun setReleaseBuild (Z)V
 	public final fun setVendor (Ljava/lang/String;)V
 	public final fun setVendorUrl (Ljava/lang/String;)V
 	public final fun validate ()V
 }
 
-public final class com/xemantic/gradle/conventions/XemanticGradlePlugin : org/gradle/api/Plugin {
+public final class com/xemantic/gradle/conventions/XemanticConventionsPlugin : org/gradle/api/Plugin {
 	public fun <init> ()V
 	public synthetic fun apply (Ljava/lang/Object;)V
 	public fun apply (Lorg/gradle/api/Project;)V
 }
 
-public final class com/xemantic/gradle/conventions/XemanticGradlePlugin$inlined$sam$i$org_gradle_api_Action$0 : org/gradle/api/Action {
+public final class com/xemantic/gradle/conventions/XemanticConventionsPlugin$apply$1$1$3$inlined$sam$i$org_gradle_api_Action$0 : org/gradle/api/Action {
 	public fun <init> (Lkotlin/jvm/functions/Function1;)V
 	public final synthetic fun execute (Ljava/lang/Object;)V
 }
 
-public final class com/xemantic/gradle/conventions/XemanticGradlePluginKt {
-	public static final fun getXemantic (Lorg/gradle/api/Project;)Lcom/xemantic/gradle/conventions/XemanticGradleExtension;
+public final class com/xemantic/gradle/conventions/XemanticConventionsPlugin$apply$1$1$inlined$sam$i$org_gradle_api_Action$0 : org/gradle/api/Action {
+	public fun <init> (Lkotlin/jvm/functions/Function1;)V
+	public final synthetic fun execute (Ljava/lang/Object;)V
+}
+
+public final class com/xemantic/gradle/conventions/XemanticConventionsPluginKt {
+	public static final fun getXemantic (Lorg/gradle/api/Project;)Lcom/xemantic/gradle/conventions/XemanticConfiguration;
+}
+
+public final class com/xemantic/gradle/conventions/internal/WorkaroundsKt$applyWorkarounds$1$inlined$sam$i$org_gradle_api_Action$0 : org/gradle/api/Action {
+	public fun <init> (Lkotlin/jvm/functions/Function1;)V
+	public final synthetic fun execute (Ljava/lang/Object;)V
 }
 
