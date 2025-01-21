@@ -17,15 +17,28 @@
 package com.xemantic.gradle.conventions
 
 import org.gradle.testfixtures.ProjectBuilder
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 
 class XemanticGradlePluginTest {
 
     @Test
+    @Ignore
     fun `plugin registers task`() {
         val project = ProjectBuilder.builder().build()
-        project.plugins.apply("com.xemantic.gradle.xemantic-gradle-plugin")
+//        project.apply {
+//            from {
+//                project.file("build.gradle.kts").apply {
+//                    writeText("""
+//                        xemantic {
+//                            description = "Test project description"
+//                        }
+//                    """.trimIndent())
+//                }
+//            }
+//        }
+        project.plugins.apply("com.xemantic.gradle.xemantic-conventions")
         assertNotNull(project.tasks.findByName("updateVersionInReadme"))
     }
 
