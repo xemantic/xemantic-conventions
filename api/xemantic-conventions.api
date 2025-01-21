@@ -55,7 +55,6 @@ public abstract class com/xemantic/gradle/conventions/XemanticConfiguration {
 	public final fun setGitHubAccount (Ljava/lang/String;)V
 	public final fun setInceptionYear (Ljava/lang/Integer;)V
 	public final fun setLicense (Lcom/xemantic/gradle/conventions/License;)V
-	public final fun setReleaseBuild (Z)V
 	public final fun setVendor (Ljava/lang/String;)V
 	public final fun setVendorUrl (Ljava/lang/String;)V
 	public final fun validate ()V
