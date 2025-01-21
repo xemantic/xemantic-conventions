@@ -2,17 +2,16 @@
 java = "17"
 kotlin = "2.0.21" # the highest version supported by the plugin at the moment
 
+xemanticKotlinTest = "1.7.4"
+
 versionsPlugin = "0.51.0"
 dokkaPlugin = "2.0.0"
 jreleaserPlugin = "1.16.0"
-
 binaryCompatibilityValidatorPlugin = "0.17.0"
-
-mockk = "1.13.16"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
-mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+xemantic-kotlin-test = { module = "com.xemantic.kotlin:xemantic-kotlin-test", version.ref = "xemanticKotlinTest" }
 
 [plugins]
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokkaPlugin" }
