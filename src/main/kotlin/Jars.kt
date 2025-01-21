@@ -23,18 +23,22 @@ import org.gradle.api.tasks.bundling.Jar
  * Each JAR file has also a manifest, and the manifest can contain additional
  * information related to the vendor and the build.
  */
-fun Jar.populateJarManifest(
-    vendor: String,
+internal fun Jar.populateJarManifest(
     project: Project,
-    builtDate: String
 ) {
     manifest {
         attributes.let {
             it["Implementation-Title"] = archiveBaseName.get()
             it["Implementation-Version"] = archiveVersion.get()
-            it["Implementation-Vendor"] = vendor
-            it["Built-By"] = "Gradle"
-            it["Built-Date"] = builtDate
+            it["Implementation-Vendor"] = project.xemantic.vendor
+            it["Implementation-Vendor-Id"] = project.rootProject.name
+            it["Created-By"] = "gradle"
+            it["Build-Time"] = project.xemantic.buildTime
+            project.xemantic.license!!.apply {
+                it["License"] = spxdx
+                it["License-Name"] = name
+                it["License-URL"] = url
+            }
         }
     }
     metaInf {
