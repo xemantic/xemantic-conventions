@@ -17,7 +17,7 @@
 package com.xemantic.gradle.conventions
 
 /**
- * The list of open source licenses which can be used by xemantic projects.
+ * The list of open source licenses which can be used by Xemantic projects.
  */
 @Suppress("unused")
 public enum class License(
