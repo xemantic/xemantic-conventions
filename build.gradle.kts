@@ -9,7 +9,6 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
-import kotlin.apply
 
 plugins {
     `kotlin-dsl`
@@ -55,10 +54,11 @@ class Xemantic {
 
     private val now = LocalDateTime.now()
 
-    val buildTime: String get() = now
-        .atZone(ZoneId.systemDefault())
-        .withZoneSameInstant(ZoneOffset.UTC)
-        .format(TIMESTAMP_FORMATTER)
+    val buildTime: String
+        get() = now
+            .atZone(ZoneId.systemDefault())
+            .withZoneSameInstant(ZoneOffset.UTC)
+            .format(TIMESTAMP_FORMATTER)
 
     val isReleaseBuild: Boolean = (project.version as String).endsWith("-SNAPSHOT")
 }

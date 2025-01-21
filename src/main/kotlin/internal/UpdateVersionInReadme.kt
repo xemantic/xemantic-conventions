@@ -27,8 +27,8 @@ import java.io.File
 internal abstract class UpdateVersionInReadme : DefaultTask() {
 
     init {
-       group = "xemantic"
-       description = "Updates artifact version in README.md file"
+        group = "xemantic"
+        description = "Updates artifact version in README.md file"
     }
 
     @TaskAction

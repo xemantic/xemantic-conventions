@@ -16,11 +16,7 @@
 
 package com.xemantic.gradle.conventions
 
-import com.xemantic.gradle.conventions.internal.UpdateVersionInReadme
-import com.xemantic.gradle.conventions.internal.applyWorkarounds
-import com.xemantic.gradle.conventions.internal.populateJarManifest
-import com.xemantic.gradle.conventions.internal.xemanticSigning
-import com.xemantic.gradle.conventions.internal.xemanticTestLogging
+import com.xemantic.gradle.conventions.internal.*
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension

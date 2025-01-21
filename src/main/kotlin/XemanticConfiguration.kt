@@ -47,15 +47,17 @@ public abstract class XemanticConfiguration @Inject constructor(
 
     public var vendorUrl: String = "https://xemantic.com"
 
-    public val copyright: String get() =
-    "© ${if (inceptionYear != now.year) inceptionYear.toString() else ""}-${now.year} $vendor"
+    public val copyright: String
+        get() =
+            "© ${if (inceptionYear != now.year) inceptionYear.toString() else ""}-${now.year} $vendor"
 
     public var gitHubAccount: String = "xemantic"
 
-    public val buildTime: String get() = now
-        .atZone(ZoneId.systemDefault())
-        .withZoneSameInstant(ZoneOffset.UTC)
-        .format(TIMESTAMP_FORMATTER)
+    public val buildTime: String
+        get() = now
+            .atZone(ZoneId.systemDefault())
+            .withZoneSameInstant(ZoneOffset.UTC)
+            .format(TIMESTAMP_FORMATTER)
 
     private val _developers = mutableListOf<Developer>()
     public val developers: List<Developer> = _developers
@@ -64,7 +66,8 @@ public abstract class XemanticConfiguration @Inject constructor(
 
     public val isReleaseBuild: Boolean = (project.version as String).endsWith("-SNAPSHOT")
 
-    public val releasePageUrl: String = "https://github.com/$gitHubAccount/${project.rootProject.name}/releases/tag/v${project.version}"
+    public val releasePageUrl: String =
+        "https://github.com/$gitHubAccount/${project.rootProject.name}/releases/tag/v${project.version}"
 
     public val homepageUrl: String = "https://github.com/$gitHubAccount/${project.rootProject.name}"
 
