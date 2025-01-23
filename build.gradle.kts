@@ -67,9 +67,6 @@ class Xemantic {
 
 val xemantic = Xemantic()
 
-println("Version: $version")
-println("isReleaseBuild: ${xemantic.isReleaseBuild}")
-
 gradlePlugin {
     website = "https://github.com/xemantic/xemantic-gradle-plugin"
     vcsUrl = "https://github.com/xemantic/xemantic-gradle-plugin.git"
@@ -95,6 +92,10 @@ kotlin {
         jvmTarget = JvmTarget.fromTarget(javaTarget)
         freeCompilerArgs.add("-Xjdk-release=$javaTarget")
     }
+}
+
+java {
+    withSourcesJar()
 }
 
 tasks {
@@ -319,9 +320,7 @@ tasks.withType<Test> {
 if (xemantic.isReleaseBuild) {
     logger.lifecycle("Creating jreleaser dir")
     // fixes https://github.com/jreleaser/jreleaser/issues/1292
-    val dirCreated = layout.buildDirectory.dir("jreleaser").get().asFile.mkdirs()
-    logger.lifecycle("dirCreated: $dirCreated")
-    logger.lifecycle("dir: ${layout.buildDirectory.dir("jreleaser").get().asFile.absolutePath}")
+    layout.buildDirectory.dir("jreleaser").get().asFile.mkdirs()
     xemantic.stagingDeployDir.mkdirs()
 }
 
