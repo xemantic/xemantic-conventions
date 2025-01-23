@@ -319,7 +319,7 @@ tasks.withType<Test> {
 if (xemantic.isReleaseBuild) {
     logger.lifecycle("Creating jreleaser dir")
     // fixes https://github.com/jreleaser/jreleaser/issues/1292
-    val dirCreated = layout.buildDirectory.dir("jreleaser").get().asFile.mkdir()
+    val dirCreated = layout.buildDirectory.dir("jreleaser").get().asFile.mkdirs()
     logger.lifecycle("dirCreated: $dirCreated")
     logger.lifecycle("dir: ${layout.buildDirectory.dir("jreleaser").get().asFile.absolutePath}")
     xemantic.stagingDeployDir.mkdirs()

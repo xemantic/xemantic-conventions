@@ -28,7 +28,7 @@ internal fun Project.applyWorkarounds(
 
     if (xemantic.isReleaseBuild) {
         // fixes https://github.com/jreleaser/jreleaser/issues/1292
-        layout.buildDirectory.dir("jreleaser").get().asFile.mkdir()
+        layout.buildDirectory.dir("jreleaser").get().asFile.mkdirs()
         xemantic.stagingDeployDir.mkdirs()
     }
 
