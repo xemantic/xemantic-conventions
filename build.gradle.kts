@@ -67,6 +67,9 @@ class Xemantic {
 
 val xemantic = Xemantic()
 
+println("Version: $version")
+println("isReleaseBuild: ${xemantic.isReleaseBuild}")
+
 gradlePlugin {
     website = "https://github.com/xemantic/xemantic-gradle-plugin"
     vcsUrl = "https://github.com/xemantic/xemantic-gradle-plugin.git"
