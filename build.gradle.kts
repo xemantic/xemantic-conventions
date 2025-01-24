@@ -135,16 +135,12 @@ powerAssert {
 
 val releaseAnnouncementSubject = """🚀 ${rootProject.name} $version has been released!"""
 
-val releaseAnnouncementBody = """
+val releaseAnnouncement = """
+🚀 ${rootProject.name} $version has been released!    
+
 ${xemantic.releasePageUrl}
 
 ${xemantic.description}
-"""
-
-val releaseAnnouncement = """
-$releaseAnnouncementSubject
-
-$releaseAnnouncementBody
 """
 
 // https://kotlinlang.org/docs/dokka-migration.html#adjust-configuration-options
@@ -227,7 +223,7 @@ jreleaser {
         linkedin {
             active = Active.ALWAYS
             subject = releaseAnnouncementSubject
-            message = releaseAnnouncementBody
+            message = releaseAnnouncement
         }
     }
 }

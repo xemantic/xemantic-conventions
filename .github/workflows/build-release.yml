@@ -44,7 +44,7 @@ jobs:
         run: ./gradlew -Pversion=$VERSION build sourcesJar javadocJar signPluginMavenPublication publish jreleaserDeploy jreleaserAnnounce
 
       - name: Display JReleaser trace.log (only on failure)
-#        if: failure()
+        if: failure()
         run: |
           if [ -f build/jreleaser/trace.log ]; then
             echo "trace.log Content:"
@@ -52,25 +52,3 @@ jobs:
           else
             echo "trace.log file not found"
           fi
-
-      - name: Get target branch for tag
-        run: |
-          git fetch --all
-          TARGET_BRANCH=$(git branch -r --contains $GITHUB_REF | grep -v "HEAD" | head -n 1 | sed 's/origin\///')
-          echo "Target branch for tag: $TARGET_BRANCH"
-          echo "TARGET_BRANCH=$TARGET_BRANCH" >> $GITHUB_ENV
-
-      - name: Checkout target branch
-        uses: actions/checkout@v4.2.2
-        with:
-          ref: ${{ env.TARGET_BRANCH }}
-          fetch-depth: 0
-
-      - name: Update README
-        run: ./gradlew -Pversion=$VERSION updateVersionInReadme
-
-      - name: Commit README.md pointing to released version
-        uses: stefanzweifel/git-auto-commit-action@v5.1.0
-        with:
-          commit_message: Dependency version in README.md updated to ${{ env.VERSION }}
-          file_pattern: 'README.md'
