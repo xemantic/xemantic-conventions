@@ -133,13 +133,18 @@ powerAssert {
     )
 }
 
+val releaseAnnouncementSubject = """🚀 ${rootProject.name} $version has been released!"""
 
-val releaseAnnouncement = """
-🚀 ${rootProject.name} $version has been released!
-
+val releaseAnnouncementBody = """
 ${xemantic.releasePageUrl}
 
 ${xemantic.description}
+"""
+
+val releaseAnnouncement = """
+$releaseAnnouncementSubject
+
+$releaseAnnouncementBody
 """
 
 // https://kotlinlang.org/docs/dokka-migration.html#adjust-configuration-options
@@ -218,6 +223,11 @@ jreleaser {
                 messageProperty = "content"
                 structuredMessage = true
             }
+        }
+        linkedin {
+            active = Active.ALWAYS
+            subject = releaseAnnouncementSubject
+            message = releaseAnnouncementBody
         }
     }
 }
