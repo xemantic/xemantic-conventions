@@ -45,7 +45,7 @@ jobs:
         run: ./gradlew -Pversion=$VERSION build sourcesJar javadocJar signPluginMavenPublication publish jreleaserDeploy jreleaserAnnounce
 
       - name: Display JReleaser trace.log (only on failure)
-        if: failure()
+#        if: failure()
         run: |
           if [ -f build/jreleaser/trace.log ]; then
             echo "trace.log Content:"
