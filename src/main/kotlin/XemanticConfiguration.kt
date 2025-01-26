@@ -62,7 +62,7 @@ public abstract class XemanticConfiguration @Inject constructor(
     private val _developers = mutableListOf<Developer>()
     public val developers: List<Developer> = _developers
 
-    public val authorIds: List<String> = developers.map { it.id }
+    public val authorIds: List<String> get() = developers.map { it.id }
 
     public val isReleaseBuild: Boolean = !(project.version as String).endsWith("-SNAPSHOT")
 
