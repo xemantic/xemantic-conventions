@@ -67,6 +67,16 @@ class Xemantic {
 
 val xemantic = Xemantic()
 
+val releaseAnnouncementSubject = """🚀 ${rootProject.name} $version has been released!"""
+
+val releaseAnnouncement = """
+🚀 ${rootProject.name} $version has been released!    
+
+${xemantic.releasePageUrl}
+
+${xemantic.description}
+"""
+
 gradlePlugin {
     website = "https://github.com/xemantic/xemantic-gradle-plugin"
     vcsUrl = "https://github.com/xemantic/xemantic-gradle-plugin.git"
@@ -133,15 +143,7 @@ powerAssert {
     )
 }
 
-val releaseAnnouncementSubject = """🚀 ${rootProject.name} $version has been released!"""
 
-val releaseAnnouncement = """
-🚀 ${rootProject.name} $version has been released!    
-
-${xemantic.releasePageUrl}
-
-${xemantic.description}
-"""
 
 // https://kotlinlang.org/docs/dokka-migration.html#adjust-configuration-options
 dokka {

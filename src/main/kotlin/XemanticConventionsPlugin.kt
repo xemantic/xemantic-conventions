@@ -63,12 +63,14 @@ public class XemanticConventionsPlugin : Plugin<Project> {
                                 url = xemantic.stagingDeployDir.toURI()
                             }
                         } else {
-                            maven {
-                                name = "GitHubPackages"
-                                setUrl("https://maven.pkg.github.com/${xemantic.gitHubAccount}/${rootProject.name}")
-                                credentials {
-                                    username = xemantic.githubActor
-                                    password = xemantic.githubToken
+                            if ("githubActor" in project.properties) {
+                                maven {
+                                    name = "GitHubPackages"
+                                    setUrl("https://maven.pkg.github.com/${xemantic.gitHubAccount}/${rootProject.name}")
+                                    credentials {
+                                        username = project.properties["githubActor"]!!.toString()
+                                        password = project.properties["githubToken"]!!.toString()
+                                    }
                                 }
                             }
                         }
