@@ -70,11 +70,11 @@ val xemantic = Xemantic()
 val releaseAnnouncementSubject = """🚀 ${rootProject.name} $version has been released!"""
 
 val releaseAnnouncement = """
-🚀 ${rootProject.name} $version has been released!    
-
-${xemantic.releasePageUrl}
+$releaseAnnouncementSubject    
 
 ${xemantic.description}
+
+${xemantic.releasePageUrl}
 """
 
 gradlePlugin {
