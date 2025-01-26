@@ -56,7 +56,9 @@ public class XemanticConventionsPlugin : Plugin<Project> {
                 }
 
                 configure<PublishingExtension> {
+
                     val publishing = this
+
                     repositories {
                         if (xemantic.isReleaseBuild) {
                             maven {
@@ -75,9 +77,17 @@ public class XemanticConventionsPlugin : Plugin<Project> {
                             }
                         }
                     }
-                    configure<SigningExtension> {
-                        xemanticSigning(xemantic, publishing)
+
+                    if ("signingKey" in project.properties) {
+                        configure<SigningExtension> {
+                            useInMemoryPgpKeys(
+                                project.properties["signingKey"]!!.toString(),
+                                project.properties["signingPassword"]!!.toString()
+                            )
+                            sign(publishing.publications)
+                        }
                     }
+
                 }
 
                 applyWorkarounds(xemantic)
