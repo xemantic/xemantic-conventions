@@ -98,8 +98,6 @@ powerAssert {
     )
 }
 
-
-
 // https://kotlinlang.org/docs/dokka-migration.html#adjust-configuration-options
 dokka {
     pluginsConfiguration.html {
@@ -155,6 +153,11 @@ jreleaser {
             }
         }
     }
+    checksum {
+        individual = false
+        artifacts = false
+        files = false
+    }
     announce {
         webhooks {
             create("discord") {
@@ -168,6 +171,10 @@ jreleaser {
             active = Active.ALWAYS
             subject = releaseAnnouncementSubject
             message = releaseAnnouncement
+        }
+        bluesky {
+            active = Active.ALWAYS
+            status = releaseAnnouncement
         }
     }
 }
