@@ -1,7 +1,7 @@
 # xemantic-gradle-plugin
 Sets up standard gradle conventions for [Xemantic](https://github.com/xemantic)'s 
 
-[<img alt="Maven Central Version" src="https://img.shields.io/maven-central/v/com.xemantic.gradle/xemantic-conventions">](https://central.sonatype.com/namespace/com.xemantic.gradle)
+[<img alt="Maven Central Version" src="https://img.shields.io/maven-central/v/com.xemantic.gradle/xemantic-conventions">](https://central.sonatype.com/artifact/com.xemantic.gradle/xemantic-conventions)
 [<img alt="GitHub Release Date" src="https://img.shields.io/github/release-date/xemantic/xemantic-conventions">](https://github.com/xemantic/xemantic-conventions/releases)
 [<img alt="license" src="https://img.shields.io/github/license/xemantic/xemantic-conventions?color=blue">](https://github.com/xemantic/xemantic-conventions/blob/main/LICENSE)
 
