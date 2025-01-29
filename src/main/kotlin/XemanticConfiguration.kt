@@ -49,7 +49,7 @@ public abstract class XemanticConfiguration @Inject constructor(
 
     public val copyright: String
         get() =
-            "© ${if (inceptionYear != now.year) inceptionYear.toString() else ""}-${now.year} $vendor"
+            "© ${if (inceptionYear != now.year) "$inceptionYear-" else ""}${now.year} $vendor"
 
     public var gitHubAccount: String = "xemantic"
 
