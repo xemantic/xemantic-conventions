@@ -34,10 +34,6 @@ internal fun Project.applyWorkarounds(
 
     allprojects {
 
-        tasks.named("jreleaserFullRelease") {
-            dependsOn("publish")
-        }
-
         // workaround for KMP/gradle signing issue
         // https://github.com/gradle/gradle/issues/26091
         tasks.withType<PublishToMavenRepository> {
@@ -70,6 +66,10 @@ internal fun Project.applyWorkarounds(
 
             tasks.named("jreleaserAnnounce").configure {
                 mustRunAfter("jreleaserDeploy")
+            }
+
+            tasks.named("jreleaserFullRelease").configure {
+                mustRunAfter("publish")
             }
 
         }
