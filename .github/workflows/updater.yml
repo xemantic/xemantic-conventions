@@ -1,5 +1,4 @@
 name: GitHub Actions Version Updater
-description: Updates GitHub Actions versions in workflow files automatically on a weekly schedule
 
 # Controls when the action will run.
 on:
