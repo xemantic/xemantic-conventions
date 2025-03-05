@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jreleaser.model.Active
 
 plugins {
-    `kotlin-dsl`
+    alias(libs.plugins.kotlin.dsl)
     `maven-publish`
     signing
     alias(libs.plugins.dokka)
