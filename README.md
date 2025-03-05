@@ -30,7 +30,7 @@ To you `lib.versions.toml` (located in the `gradle` dir) add:
 [versions]
 
 # your other versions ...
-xemanticConventionsPlugin = "0.3.0"
+xemanticConventionsPlugin = "0.3.2"
 
 [libraries]
 # your libraries ...
