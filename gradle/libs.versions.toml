@@ -2,19 +2,21 @@
 java = "17"
 kotlin = "2.0.21" # the highest version supported by the plugin at the moment
 
-xemanticKotlinTest = "1.7.4"
+xemanticKotlinTest = "1.8.10"
 
-versionsPlugin = "0.51.0"
+kotlinDslPlugin = "5.2.0"
+versionsPlugin = "0.52.0"
 dokkaPlugin = "2.0.0"
-jreleaserPlugin = "1.16.0"
+jreleaserPlugin = "1.17.0"
 binaryCompatibilityValidatorPlugin = "0.17.0"
-xemanticConventionsPlugin = "0.3.0"
+xemanticConventionsPlugin = "0.3.1"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 xemantic-kotlin-test = { module = "com.xemantic.kotlin:xemantic-kotlin-test", version.ref = "xemanticKotlinTest" }
 
 [plugins]
+kotlin-dsl = { id = "org.gradle.kotlin.kotlin-dsl", version.ref = "kotlinDslPlugin" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokkaPlugin" }
 versions = { id = "com.github.ben-manes.versions", version.ref = "versionsPlugin" }
 binary-compatibility-validator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "binaryCompatibilityValidatorPlugin" }
