@@ -17,6 +17,7 @@ public final class com/xemantic/gradle/conventions/License : java/lang/Enum {
 	public static final field APACHE Lcom/xemantic/gradle/conventions/License;
 	public static final field GPL Lcom/xemantic/gradle/conventions/License;
 	public static final field LGPL Lcom/xemantic/gradle/conventions/License;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public final fun getId ()Ljava/lang/String;
 	public final fun getSpxdx ()Ljava/lang/String;
 	public final fun getUrl ()Ljava/lang/String;
@@ -66,22 +67,7 @@ public final class com/xemantic/gradle/conventions/XemanticConventionsPlugin : o
 	public fun apply (Lorg/gradle/api/Project;)V
 }
 
-public final class com/xemantic/gradle/conventions/XemanticConventionsPlugin$apply$1$1$3$inlined$sam$i$org_gradle_api_Action$0 : org/gradle/api/Action {
-	public fun <init> (Lkotlin/jvm/functions/Function1;)V
-	public final synthetic fun execute (Ljava/lang/Object;)V
-}
-
-public final class com/xemantic/gradle/conventions/XemanticConventionsPlugin$apply$1$1$inlined$sam$i$org_gradle_api_Action$0 : org/gradle/api/Action {
-	public fun <init> (Lkotlin/jvm/functions/Function1;)V
-	public final synthetic fun execute (Ljava/lang/Object;)V
-}
-
 public final class com/xemantic/gradle/conventions/XemanticConventionsPluginKt {
 	public static final fun getXemantic (Lorg/gradle/api/Project;)Lcom/xemantic/gradle/conventions/XemanticConfiguration;
-}
-
-public final class com/xemantic/gradle/conventions/internal/WorkaroundsKt$applyWorkarounds$1$inlined$sam$i$org_gradle_api_Action$0 : org/gradle/api/Action {
-	public fun <init> (Lkotlin/jvm/functions/Function1;)V
-	public final synthetic fun execute (Ljava/lang/Object;)V
 }
 
