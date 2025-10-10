@@ -17,8 +17,12 @@
 package com.xemantic.gradle.conventions.internal
 
 import org.gradle.api.tasks.testing.Test
-import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.TestDescriptor
+import org.gradle.api.tasks.testing.TestResult
 import org.gradle.api.tasks.testing.logging.TestLogEvent
+import org.gradle.kotlin.dsl.KotlinClosure2
+import java.io.StringWriter
+import java.io.PrintWriter
 
 /**
  * Rules for logging of tests.
@@ -28,12 +32,55 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
  * build and the analysis of possible build failures.
  */
 internal fun Test.xemanticTestLogging() {
+
     testLogging {
         events(
-            TestLogEvent.SKIPPED,
-            TestLogEvent.FAILED
+            TestLogEvent.SKIPPED
         )
-        showStackTraces = true
-        exceptionFormat = TestExceptionFormat.FULL
+        showStackTraces = false
+    }
+
+    afterTest(KotlinClosure2({ descriptor: TestDescriptor, result: TestResult ->
+        if (result.resultType == TestResult.ResultType.FAILURE) {
+            val platform = extractPlatform(name)
+            val testName = "${descriptor.className}.${descriptor.name}"
+
+            logger.lifecycle("\n<test-failure name=\"$testName\" platform=\"$platform\">")
+            result.exceptions.forEach { exception ->
+                logger.lifecycle(exception.message ?: exception.toString())
+            }
+
+            if (result.exceptions.isNotEmpty()) {
+                logger.lifecycle("<stacktrace>")
+                result.exceptions.forEach { exception ->
+                    val stackTrace = StringWriter().also { sw ->
+                        exception.printStackTrace(PrintWriter(sw))
+                    }.toString()
+                    logger.lifecycle(stackTrace)
+                }
+                logger.lifecycle("</stacktrace>")
+            }
+
+            logger.lifecycle("</test-failure>\n")
+        }
+    }))
+
+}
+
+/**
+ * Extracts the platform name from a test task name.
+ *
+ * Examples:
+ * - "jvmTest" -> "jvm"
+ * - "wasmJsTest" -> "wasmJs"
+ * - "test" -> "jvm" (default platform)
+ * - "allTests" -> "all"
+ * - "check" -> "unknown"
+ */
+private fun extractPlatform(taskName: String): String {
+    return when {
+        taskName == "test" -> "jvm"
+        taskName.endsWith("Test") -> taskName.removeSuffix("Test")
+        else -> "unknown"
     }
 }
