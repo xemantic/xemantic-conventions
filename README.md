@@ -22,6 +22,15 @@ Sets up standard gradle conventions for [Xemantic](https://github.com/xemantic)'
 
 Setting up a gradle project for a Kotlin multiplatform library can be hassle. There are so many repetitive pieces of configuration which are easy to mismanage and omit. There are also special workarounds required to publish such libraries to maven central. This plugin is attempting to centralize all of that.
 
+## Features
+
+- **JAR Manifest Configuration**: Automatically populates implementation metadata, build time, and license info
+- **Maven Central Publishing**: Configures POM with organization, SCM, CI, and issue management metadata
+- **PGP Signing**: Supports in-memory PGP keys from project properties
+- **AI-Friendly Test Logging**: Test failures are logged in a structured, machine-readable format optimized for processing by coding AI agents (like Claude Code). Only failures and skipped tests are logged with full stack traces to reduce noise and make CI/CD output easily digestible by both humans and AI tools.
+- **Version Management**: Automated task to update dependency versions in README.md
+- **JReleaser Integration**: Seamless deployment to Maven Central with announcements to Discord, LinkedIn, and Bluesky
+
 ## Usage
 
 To you `lib.versions.toml` (located in the `gradle` dir) add:

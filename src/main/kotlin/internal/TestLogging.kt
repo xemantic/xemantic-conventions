@@ -38,6 +38,8 @@ internal fun Test.xemanticTestLogging() {
             TestLogEvent.SKIPPED
         )
         showStackTraces = false
+        showExceptions = false
+        showCauses = false
     }
 
     afterTest(KotlinClosure2({ descriptor: TestDescriptor, result: TestResult ->
@@ -53,10 +55,10 @@ internal fun Test.xemanticTestLogging() {
             if (result.exceptions.isNotEmpty()) {
                 logger.lifecycle("<stacktrace>")
                 result.exceptions.forEach { exception ->
-                    val stackTrace = StringWriter().also { sw ->
-                        exception.printStackTrace(PrintWriter(sw))
-                    }.toString()
-                    logger.lifecycle(stackTrace)
+                    // Print stack trace without the exception message
+                    exception.stackTrace.forEach { element ->
+                        logger.lifecycle("  at $element")
+                    }
                 }
                 logger.lifecycle("</stacktrace>")
             }
