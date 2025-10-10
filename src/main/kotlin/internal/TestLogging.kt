@@ -16,13 +16,11 @@
 
 package com.xemantic.gradle.conventions.internal
 
-import org.gradle.api.tasks.testing.Test
+import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.api.tasks.testing.TestDescriptor
 import org.gradle.api.tasks.testing.TestResult
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.gradle.kotlin.dsl.KotlinClosure2
-import java.io.StringWriter
-import java.io.PrintWriter
 
 /**
  * Rules for logging of tests.
@@ -31,7 +29,7 @@ import java.io.PrintWriter
  * convenient for digestion of not only a human, but also an AI agent performing the
  * build and the analysis of possible build failures.
  */
-internal fun Test.xemanticTestLogging() {
+internal fun AbstractTestTask.configureTestReporting() {
 
     testLogging {
         events(
@@ -48,17 +46,16 @@ internal fun Test.xemanticTestLogging() {
             val testName = "${descriptor.className}.${descriptor.name}"
 
             logger.lifecycle("\n<test-failure name=\"$testName\" platform=\"$platform\">")
+            logger.lifecycle("<message>")
             result.exceptions.forEach { exception ->
                 logger.lifecycle(exception.message ?: exception.toString())
             }
+            logger.lifecycle("</message>")
 
-            if (result.exceptions.isNotEmpty()) {
+            result.exceptions.forEach { exception ->
                 logger.lifecycle("<stacktrace>")
-                result.exceptions.forEach { exception ->
-                    // Print stack trace without the exception message
-                    exception.stackTrace.forEach { element ->
-                        logger.lifecycle("  at $element")
-                    }
+                exception.stackTrace.forEach { element ->
+                    logger.lifecycle("  at $element")
                 }
                 logger.lifecycle("</stacktrace>")
             }

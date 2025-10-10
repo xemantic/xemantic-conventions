@@ -21,6 +21,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.tasks.bundling.Jar
+import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.withType
@@ -51,8 +52,12 @@ public class XemanticConventionsPlugin : Plugin<Project> {
                     populateJarManifest(project)
                 }
 
-                tasks.withType<Test> {
-                    xemanticTestLogging()
+                tasks.withType<AbstractTestTask>().configureEach {
+                    configureTestReporting()
+                }
+
+                tasks.withType<Test>().configureEach {
+                    useJUnitPlatform()
                 }
 
                 configure<PublishingExtension> {
