@@ -39,7 +39,7 @@ To you `lib.versions.toml` (located in the `gradle` dir) add:
 [versions]
 
 # your other versions ...
-xemanticConventionsPlugin = "0.3.2"
+xemanticConventionsPlugin = "0.4.3"
 
 [libraries]
 # your libraries ...
@@ -64,4 +64,36 @@ plugins {
     alias(libs.plugins.jreleaser)
     alias(libs.plugins.xemantic.conventions)
 }
+```
+
+## Test configuration
+
+The current test reporting is configured for AI-friendly output, in particular when used together with [xemantic-kotlin-test](https://github.com/xemantic/xemantic-kotlin-test) library, so that an autonomous AI agent can perform TDD in a feedback loop, with maximal information and minimal noise, preventing context rot.
+
+Example error report when running gradle build in JVM:
+
+```
+> Task :jvmTest FAILED
+<test-failure test="com.xemantic.kotlin.test.ProjectDocumentationTest.foo equals bar()" platform="jvm">
+<message>
+assert("foo" == "bar")
+             |
+             false
+</message>
+<stacktrace>
+  at app//org.junit.jupiter.api.AssertionUtils.fail(AssertionUtils.java:38)
+  at app//org.junit.jupiter.api.Assertions.fail(Assertions.java:138)
+  at app//kotlin.test.junit5.JUnit5Asserter.fail(JUnitSupport.kt:56)
+  at app//kotlin.test.Asserter.assertTrue(Assertions.kt:694)
+  at app//kotlin.test.junit5.JUnit5Asserter.assertTrue(JUnitSupport.kt:30)
+  at app//kotlin.test.Asserter.assertTrue(Assertions.kt:704)
+  at app//kotlin.test.junit5.JUnit5Asserter.assertTrue(JUnitSupport.kt:30)
+  at app//com.xemantic.kotlin.test.AssertionsKt.assert(Assertions.kt:32)
+  at app//com.xemantic.kotlin.test.ProjectDocumentationTest.foo equals bar(ProjectDocumentationTest.kt:25)
+  at java.base@24.0.2/java.lang.reflect.Method.invoke(Method.java:565)
+  at java.base@24.0.2/java.util.ArrayList.forEach(ArrayList.java:1604)
+  at java.base@24.0.2/java.util.ArrayList.forEach(ArrayList.java:1604)
+</stacktrace>
+</test-failure>
+ProjectDocumentationTest[jvm] > foo equals bar()[jvm] FAILED
 ```

@@ -45,10 +45,13 @@ internal fun AbstractTestTask.configureTestReporting() {
             val platform = extractPlatform(name)
             val testName = "${descriptor.className}.${descriptor.name}"
 
-            logger.lifecycle("\n<test-failure name=\"$testName\" platform=\"$platform\">")
+            logger.lifecycle("\n<test-failure test=\"$testName\" platform=\"$platform\">")
             logger.lifecycle("<message>")
             result.exceptions.forEach { exception ->
-                logger.lifecycle(exception.message ?: exception.toString())
+                val message = exception.message ?: exception.toString()
+                logger.lifecycle(
+                    message.removePrefix("kotlin.AssertionError: ")
+                )
             }
             logger.lifecycle("</message>")
 
