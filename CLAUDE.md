@@ -56,9 +56,11 @@ Optional configuration:
 The plugin automatically configures:
 1. **JAR Manifests** (`Jars.kt`): Populates implementation metadata, build time, license info
 2. **Test Logging** (`TestLogging.kt`): Configured for AI-friendly output - only logs SKIPPED and FAILED tests with full stack traces
-3. **Publishing** (`Publishing.kt`): Configures POM with organization, SCM, CI, issue management
-4. **Signing**: Uses in-memory PGP keys from project properties
+3. **Publishing** (`Publishing.kt`): Configures POM with organization, SCM, CI, issue management (only when `maven-publish` plugin is applied)
+4. **Signing**: Uses in-memory PGP keys from project properties (only when `signing` plugin is applied)
 5. **Workarounds** (`Workarounds.kt`): Fixes for KMP signing issues and JReleaser task ordering
+
+**Multimodule Support**: The plugin applies conventions to all subprojects via `allprojects {}`. Publishing and signing configurations are conditionally applied using `pluginManager.withPlugin()` checks, so the plugin works correctly even when applied only to the root project - submodules that don't have `maven-publish` or `signing` plugins applied are safely skipped.
 
 ### Key Components
 
