@@ -59,18 +59,12 @@ internal fun Project.applyPublishingAndSigningWorkarounds() {
 }
 
 /**
- * Workarounds for JReleaser task ordering and directory creation.
+ * Workarounds for JReleaser task ordering.
  * Requires jreleaser plugin to be applied.
  */
 internal fun Project.applyJReleaserWorkarounds(
     xemantic: XemanticConfiguration
 ) {
-
-    if (xemantic.isReleaseBuild) {
-        // fixes https://github.com/jreleaser/jreleaser/issues/1292
-        layout.buildDirectory.dir("jreleaser").get().asFile.mkdirs()
-        xemantic.stagingDeployDir.mkdirs()
-    }
 
     allprojects {
 
