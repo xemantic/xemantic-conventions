@@ -60,42 +60,49 @@ public class XemanticConventionsPlugin : Plugin<Project> {
                     useJUnitPlatform()
                 }
 
-                configure<PublishingExtension> {
+                pluginManager.withPlugin("maven-publish") {
+                    configure<PublishingExtension> {
 
-                    val publishing = this
+                        val publishing = this
 
-                    repositories {
-                        if (xemantic.isReleaseBuild) {
-                            maven {
-                                url = xemantic.stagingDeployDir.toURI()
-                            }
-                        } else {
-                            if ("githubActor" in project.properties) {
+                        repositories {
+                            if (xemantic.isReleaseBuild) {
                                 maven {
-                                    name = "GitHubPackages"
-                                    setUrl("https://maven.pkg.github.com/${xemantic.gitHubAccount}/${rootProject.name}")
-                                    credentials {
-                                        username = project.properties["githubActor"]!!.toString()
-                                        password = project.properties["githubToken"]!!.toString()
+                                    url = xemantic.stagingDeployDir.toURI()
+                                }
+                            } else {
+                                if ("githubActor" in project.properties) {
+                                    maven {
+                                        name = "GitHubPackages"
+                                        setUrl("https://maven.pkg.github.com/${xemantic.gitHubAccount}/${rootProject.name}")
+                                        credentials {
+                                            username = project.properties["githubActor"]!!.toString()
+                                            password = project.properties["githubToken"]!!.toString()
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
 
-                    if ("signingKey" in project.properties) {
-                        configure<SigningExtension> {
-                            useInMemoryPgpKeys(
-                                project.properties["signingKey"]!!.toString(),
-                                project.properties["signingPassword"]!!.toString()
-                            )
-                            sign(publishing.publications)
+                        pluginManager.withPlugin("signing") {
+                            if ("signingKey" in project.properties) {
+                                configure<SigningExtension> {
+                                    useInMemoryPgpKeys(
+                                        project.properties["signingKey"]!!.toString(),
+                                        project.properties["signingPassword"]!!.toString()
+                                    )
+                                    sign(publishing.publications)
+                                }
+                            }
+                            applyPublishingAndSigningWorkarounds()
                         }
-                    }
 
+                    }
                 }
 
-                applyWorkarounds(xemantic)
+                pluginManager.withPlugin("org.jreleaser") {
+                    applyJReleaserWorkarounds(xemantic)
+                }
             }
 
         }
