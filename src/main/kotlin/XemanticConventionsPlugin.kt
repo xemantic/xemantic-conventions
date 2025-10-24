@@ -94,12 +94,15 @@ public class XemanticConventionsPlugin : Plugin<Project> {
                                     sign(publishing.publications)
                                 }
                             }
+                            applyPublishingAndSigningWorkarounds()
                         }
 
                     }
                 }
 
-                applyWorkarounds(xemantic)
+                pluginManager.withPlugin("org.jreleaser") {
+                    applyJReleaserWorkarounds(xemantic)
+                }
             }
 
         }

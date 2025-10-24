@@ -22,15 +22,11 @@ import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
 import org.gradle.kotlin.dsl.withType
 import org.gradle.plugins.signing.Sign
 
-internal fun Project.applyWorkarounds(
-    xemantic: XemanticConfiguration
-) {
-
-    if (xemantic.isReleaseBuild) {
-        // fixes https://github.com/jreleaser/jreleaser/issues/1292
-        layout.buildDirectory.dir("jreleaser").get().asFile.mkdirs()
-        xemantic.stagingDeployDir.mkdirs()
-    }
+/**
+ * Workarounds for publishing and signing issues in KMP projects.
+ * Requires both maven-publish and signing plugins to be applied.
+ */
+internal fun Project.applyPublishingAndSigningWorkarounds() {
 
     allprojects {
 
@@ -57,6 +53,26 @@ internal fun Project.applyWorkarounds(
                 mustRunAfter(it)
             }
         }
+
+    }
+
+}
+
+/**
+ * Workarounds for JReleaser task ordering and directory creation.
+ * Requires jreleaser plugin to be applied.
+ */
+internal fun Project.applyJReleaserWorkarounds(
+    xemantic: XemanticConfiguration
+) {
+
+    if (xemantic.isReleaseBuild) {
+        // fixes https://github.com/jreleaser/jreleaser/issues/1292
+        layout.buildDirectory.dir("jreleaser").get().asFile.mkdirs()
+        xemantic.stagingDeployDir.mkdirs()
+    }
+
+    allprojects {
 
         if (xemantic.isReleaseBuild) {
 
