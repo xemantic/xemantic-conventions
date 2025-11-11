@@ -32,15 +32,9 @@ internal fun Jar.populateJarManifest(
         attributes.let {
             it["Implementation-Title"] = archiveBaseName.get()
             it["Implementation-Version"] = archiveVersion.get()
-            it["Implementation-Vendor"] = project.xemantic.vendor
+            it["Implementation-Vendor"] = project.xemantic.organization
             it["Implementation-Vendor-Id"] = project.rootProject.name
             it["Created-By"] = "gradle"
-            it["Build-Time"] = project.xemantic.buildTime
-            project.xemantic.license!!.apply {
-                it["License"] = spxdx
-                it["License-Name"] = name
-                it["License-URL"] = url
-            }
         }
     }
     metaInf {

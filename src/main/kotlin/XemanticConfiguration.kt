@@ -16,14 +16,16 @@
 
 package com.xemantic.gradle.conventions
 
+import com.xemantic.gradle.conventions.internal.configureJReleaserConventions
+import com.xemantic.gradle.conventions.internal.configureReportOnlyStableDependencyUpdates
+import com.xemantic.gradle.conventions.internal.configureTestReporting
+import com.xemantic.gradle.conventions.internal.populateJarManifest
 import org.gradle.api.GradleException
 import org.gradle.api.Project
-import org.gradle.api.publish.maven.MavenPublication
-import java.io.File
+import org.gradle.api.tasks.bundling.Jar
+import org.gradle.api.tasks.testing.AbstractTestTask
+import org.gradle.kotlin.dsl.withType
 import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 public abstract class XemanticConfiguration @Inject constructor(
@@ -32,67 +34,35 @@ public abstract class XemanticConfiguration @Inject constructor(
 
     private val now = LocalDateTime.now()
 
-    public val githubActor: String? by project.properties
-    public val githubToken: String? by project.properties
-    public val signingKey: String? by project.properties
-    public val signingPassword: String? by project.properties
-
     public var description: String? = null
 
     public var inceptionYear: Int? = null
 
-    public var license: License? = null
+    public var organization: String = "Xemantic"
 
-    public var vendor: String = "Xemantic"
-
-    public var vendorUrl: String = "https://xemantic.com"
-
-    public val copyright: String
-        get() =
-            "© ${if (inceptionYear != now.year) "$inceptionYear-" else ""}${now.year} $vendor"
+    public var organizationUrl: String = "https://xemantic.com"
 
     public var gitHubAccount: String = "xemantic"
 
-    public val buildTime: String
-        get() = now
-            .atZone(ZoneId.systemDefault())
-            .withZoneSameInstant(ZoneOffset.UTC)
-            .format(TIMESTAMP_FORMATTER)
+    public val url: String = "https://github.com/$gitHubAccount/${project.rootProject.name}"
 
-    private val _developers = mutableListOf<Developer>()
-    public val developers: List<Developer> = _developers
-
-    public val authorIds: List<String> get() = developers.map { it.id }
+    public var copyright: String =
+            "© ${if (inceptionYear != now.year) "$inceptionYear-" else ""}${now.year} $organization"
 
     public val isReleaseBuild: Boolean = !(project.version as String).endsWith("-SNAPSHOT")
 
     public val releasePageUrl: String =
         "https://github.com/$gitHubAccount/${project.rootProject.name}/releases/tag/v${project.version}"
 
-    public val homepageUrl: String = "https://github.com/$gitHubAccount/${project.rootProject.name}"
 
-    public val documentationUrl: String = "https://github.com/$gitHubAccount/${project.rootProject.name}"
-
-    public val stagingDeployDir: File = project.layout.buildDirectory.dir(
-        "staging-deploy"
-    ).get().asFile
-
-    public fun developer(
-        id: String,
-        name: String,
-        email: String
-    ) {
-        _developers += Developer(id, name, email)
-    }
+    public var unstableVersionKeywords: List<String> = listOf("alpha", "beta", "rc")
 
     private fun validateParameters() {
         requireNotNull(description) { "description must be set" }
         requireNotNull(inceptionYear) { "inceptionYear must be set" }
-        requireNotNull(license) { "license must be set" }
-        require(_developers.isNotEmpty()) { "at least one developer must be added" }
     }
 
-    public fun validate() {
+    internal fun validate() {
         try {
             validateParameters()
         } catch (e: IllegalArgumentException) {
@@ -103,18 +73,46 @@ public abstract class XemanticConfiguration @Inject constructor(
         }
     }
 
-    public fun configurePom(publication: MavenPublication) {
-        publication.xemanticPom(project)
+    public fun applyJarManifests() {
+        project.allprojects {
+            tasks.withType<Jar> {
+                populateJarManifest(project)
+            }
+        }
+    }
+
+    public fun applyAxTestReporting() {
+        project.allprojects {
+            tasks.withType<AbstractTestTask>().configureEach {
+                configureTestReporting()
+            }
+        }
+    }
+
+
+    public fun applyJReleaserConventions() {
+        project.pluginManager.withPlugin("org.jreleaser") {
+            project.configureJReleaserConventions(
+                config = this@XemanticConfiguration
+            )
+        }
+    }
+
+    public fun applyReportOnlyStableDependencyUpdates() {
+        project.pluginManager.withPlugin(
+            "com.github.benmanes.gradle.versions.updates"
+        ) {
+            project.configureReportOnlyStableDependencyUpdates(
+                config = this@XemanticConfiguration
+            )
+        }
+    }
+
+    public fun applyAllConventions() {
+        applyJarManifests()
+        applyAxTestReporting()
+        applyJReleaserConventions()
+        applyReportOnlyStableDependencyUpdates()
     }
 
 }
-
-public data class Developer(
-    val id: String,
-    val name: String,
-    val email: String
-)
-
-private val TIMESTAMP_FORMATTER = DateTimeFormatter.ofPattern(
-    "uuuu-MM-dd'T'HH:mm:ss'Z'"
-)

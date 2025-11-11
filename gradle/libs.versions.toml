@@ -1,22 +1,23 @@
 [versions]
 java = "17"
-kotlin = "2.2.0" # the highest version supported by the plugin at the moment
+kotlin = "2.2.20" # the highest version supported by the plugin at the moment
 
-xemanticKotlinTest = "1.14.2"
+xemanticKotlinTest = "1.15.2"
 
 kotlinDslPlugin = "6.2.0" # the highest version supported by gradle 9.1.0 at the moment
 versionsPlugin = "0.53.0"
 dokkaPlugin = "2.1.0"
-jreleaserPlugin = "1.20.0"
+jreleaserPlugin = "1.20.0" # version 1.21.0 has a critical gradle bug
 binaryCompatibilityValidatorPlugin = "0.18.1"
 xemanticConventionsPlugin = "0.4.3"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 xemantic-kotlin-test = { module = "com.xemantic.kotlin:xemantic-kotlin-test", version.ref = "xemanticKotlinTest" }
+jreleaser = { module = "org.jreleaser:jreleaser-gradle-plugin", version.ref = "jreleaserPlugin" }
+verplugin = { module = "com.github.ben-manes.versions:com.github.ben-manes.versions.gradle.plugin", version.ref = "versionsPlugin" }
 
 [plugins]
-kotlin-dsl = { id = "org.gradle.kotlin.kotlin-dsl", version.ref = "kotlinDslPlugin" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokkaPlugin" }
 versions = { id = "com.github.ben-manes.versions", version.ref = "versionsPlugin" }
 binary-compatibility-validator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "binaryCompatibilityValidatorPlugin" }

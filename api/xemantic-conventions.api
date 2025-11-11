@@ -1,64 +1,27 @@
-public final class com/xemantic/gradle/conventions/Developer {
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Ljava/lang/String;
-	public final fun component3 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/xemantic/gradle/conventions/Developer;
-	public static synthetic fun copy$default (Lcom/xemantic/gradle/conventions/Developer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/xemantic/gradle/conventions/Developer;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getEmail ()Ljava/lang/String;
-	public final fun getId ()Ljava/lang/String;
-	public final fun getName ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class com/xemantic/gradle/conventions/License : java/lang/Enum {
-	public static final field APACHE Lcom/xemantic/gradle/conventions/License;
-	public static final field GPL Lcom/xemantic/gradle/conventions/License;
-	public static final field LGPL Lcom/xemantic/gradle/conventions/License;
-	public static fun getEntries ()Lkotlin/enums/EnumEntries;
-	public final fun getId ()Ljava/lang/String;
-	public final fun getSpxdx ()Ljava/lang/String;
-	public final fun getUrl ()Ljava/lang/String;
-	public static fun valueOf (Ljava/lang/String;)Lcom/xemantic/gradle/conventions/License;
-	public static fun values ()[Lcom/xemantic/gradle/conventions/License;
-}
-
-public final class com/xemantic/gradle/conventions/PublishingKt {
-	public static final fun xemanticPom (Lorg/gradle/api/publish/maven/MavenPublication;Lorg/gradle/api/Project;)V
-}
-
 public abstract class com/xemantic/gradle/conventions/XemanticConfiguration {
 	public fun <init> (Lorg/gradle/api/Project;)V
-	public final fun configurePom (Lorg/gradle/api/publish/maven/MavenPublication;)V
-	public final fun developer (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
-	public final fun getAuthorIds ()Ljava/util/List;
-	public final fun getBuildTime ()Ljava/lang/String;
+	public final fun applyAllConventions ()V
+	public final fun applyAxTestReporting ()V
+	public final fun applyJReleaserConventions ()V
+	public final fun applyJarManifests ()V
+	public final fun applyReportOnlyStableDependencyUpdates ()V
 	public final fun getCopyright ()Ljava/lang/String;
 	public final fun getDescription ()Ljava/lang/String;
-	public final fun getDevelopers ()Ljava/util/List;
-	public final fun getDocumentationUrl ()Ljava/lang/String;
 	public final fun getGitHubAccount ()Ljava/lang/String;
-	public final fun getGithubActor ()Ljava/lang/String;
-	public final fun getGithubToken ()Ljava/lang/String;
-	public final fun getHomepageUrl ()Ljava/lang/String;
 	public final fun getInceptionYear ()Ljava/lang/Integer;
-	public final fun getLicense ()Lcom/xemantic/gradle/conventions/License;
+	public final fun getOrganization ()Ljava/lang/String;
+	public final fun getOrganizationUrl ()Ljava/lang/String;
 	public final fun getReleasePageUrl ()Ljava/lang/String;
-	public final fun getSigningKey ()Ljava/lang/String;
-	public final fun getSigningPassword ()Ljava/lang/String;
-	public final fun getStagingDeployDir ()Ljava/io/File;
-	public final fun getVendor ()Ljava/lang/String;
-	public final fun getVendorUrl ()Ljava/lang/String;
+	public final fun getUnstableVersionKeywords ()Ljava/util/List;
+	public final fun getUrl ()Ljava/lang/String;
 	public final fun isReleaseBuild ()Z
+	public final fun setCopyright (Ljava/lang/String;)V
 	public final fun setDescription (Ljava/lang/String;)V
 	public final fun setGitHubAccount (Ljava/lang/String;)V
 	public final fun setInceptionYear (Ljava/lang/Integer;)V
-	public final fun setLicense (Lcom/xemantic/gradle/conventions/License;)V
-	public final fun setVendor (Ljava/lang/String;)V
-	public final fun setVendorUrl (Ljava/lang/String;)V
-	public final fun validate ()V
+	public final fun setOrganization (Ljava/lang/String;)V
+	public final fun setOrganizationUrl (Ljava/lang/String;)V
+	public final fun setUnstableVersionKeywords (Ljava/util/List;)V
 }
 
 public final class com/xemantic/gradle/conventions/XemanticConventionsPlugin : org/gradle/api/Plugin {
