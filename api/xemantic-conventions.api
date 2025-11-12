@@ -5,10 +5,11 @@ public abstract class com/xemantic/gradle/conventions/XemanticConfiguration {
 	public final fun applyJReleaserConventions ()V
 	public final fun applyJarManifests ()V
 	public final fun applyReportOnlyStableDependencyUpdates ()V
+	public final fun applySignBeforePublishing ()V
 	public final fun getCopyright ()Ljava/lang/String;
 	public final fun getDescription ()Ljava/lang/String;
 	public final fun getGitHubAccount ()Ljava/lang/String;
-	public final fun getInceptionYear ()Ljava/lang/Integer;
+	public final fun getInceptionYear ()Ljava/lang/String;
 	public final fun getOrganization ()Ljava/lang/String;
 	public final fun getOrganizationUrl ()Ljava/lang/String;
 	public final fun getReleasePageUrl ()Ljava/lang/String;
@@ -18,7 +19,7 @@ public abstract class com/xemantic/gradle/conventions/XemanticConfiguration {
 	public final fun setCopyright (Ljava/lang/String;)V
 	public final fun setDescription (Ljava/lang/String;)V
 	public final fun setGitHubAccount (Ljava/lang/String;)V
-	public final fun setInceptionYear (Ljava/lang/Integer;)V
+	public final fun setInceptionYear (Ljava/lang/String;)V
 	public final fun setOrganization (Ljava/lang/String;)V
 	public final fun setOrganizationUrl (Ljava/lang/String;)V
 	public final fun setUnstableVersionKeywords (Ljava/util/List;)V

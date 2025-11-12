@@ -5,12 +5,11 @@ kotlin = "2.2.20" # the highest version supported by the plugin at the moment
 xemanticKotlinTest = "1.15.2"
 kotlinSemver = "3.0.0"
 
-kotlinDslPlugin = "6.2.0" # the highest version supported by gradle 9.1.0 at the moment
 versionsPlugin = "0.53.0"
 dokkaPlugin = "2.1.0"
 jreleaserPlugin = "1.20.0" # version 1.21.0 has a critical gradle bug
 binaryCompatibilityValidatorPlugin = "0.18.1"
-mavenPublishPlugin = "0.34.0"
+mavenPublishPlugin = "0.35.0"
 xemanticConventionsPlugin = "0.6.2"
 
 [libraries]
