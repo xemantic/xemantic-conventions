@@ -15,7 +15,7 @@ plugins {
     alias(libs.plugins.power.assert)
     alias(libs.plugins.binary.compatibility.validator)
     alias(libs.plugins.maven.publish)
-    alias(libs.plugins.xemantic.conventions) // eating own dog food
+//    alias(libs.plugins.xemantic.conventions) // eating own dog food
 }
 
 group = "com.xemantic.gradle"
