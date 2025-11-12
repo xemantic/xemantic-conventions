@@ -123,6 +123,12 @@ mavenPublishing {
         automaticRelease = true
     )
 
+    // Fix for Gradle 9.2.0 task dependency validation with gradle-plugin-publish
+    // The pluginMaven publication's signing task needs explicit dependency declaration
+    tasks.withType<PublishToMavenRepository>().configureEach {
+        dependsOn(tasks.withType<Sign>())
+    }
+
     coordinates(
         groupId = group.toString(),
         artifactId = rootProject.name,
