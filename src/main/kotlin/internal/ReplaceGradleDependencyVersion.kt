@@ -43,3 +43,30 @@ internal fun String.replaceGradleDependencyVersion(
     val classifierPart = if (classifier.isNotEmpty()) ":$classifier" else ""
     """"$artifact$variant:$newVersion$classifierPart""""
 }
+
+/**
+ * Replaces the version of a Gradle plugin in a TOML version catalog string.
+ *
+ * This function finds and replaces the version of a specified version reference name in a TOML file.
+ * It matches the pattern `versionRefName = "x.y.z"` and replaces the version.
+ *
+ * Example:
+ * ```
+ * val originalString = """xemanticConventionsPlugin = "1.0.0""""
+ * val updatedString = originalString.replaceTomlVersion("xemanticConventionsPlugin", "2.0.0")
+ * // updatedString will be: """xemanticConventionsPlugin = "2.0.0""""
+ * ```
+ *
+ * @param versionRefName The name of the version reference to update.
+ * @param newVersion The new version to set.
+ * @return A new string with the updated version for the specified reference.
+ */
+internal fun String.replaceTomlVersion(
+    versionRefName: String,
+    newVersion: String
+): String = replace(
+    """^(\s*)$versionRefName\s*=\s*"[^"]*"""".toRegex(RegexOption.MULTILINE)
+) { matchResult ->
+    val indent = matchResult.groupValues[1]
+    """${indent}$versionRefName = "$newVersion""""
+}

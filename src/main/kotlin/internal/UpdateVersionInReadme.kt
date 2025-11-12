@@ -61,16 +61,35 @@ internal abstract class UpdateVersionInReadme : DefaultTask() {
         }
 
         val oldContent = readmeFile.readText()
-        val newContent = oldContent.replaceGradleDependencyVersion(
-            artifact = "$projectGroup:$projectName",
-            newVersion = projectVersion
-        )
+
+        // For xemantic-conventions project, also update TOML version reference
+        val newContent = if (projectName == "xemantic-conventions") {
+            oldContent
+                .replaceGradleDependencyVersion(
+                    artifact = "$projectGroup:$projectName",
+                    newVersion = projectVersion
+                )
+                .replaceTomlVersion(
+                    versionRefName = "xemanticConventionsPlugin",
+                    newVersion = projectVersion
+                )
+        } else {
+            oldContent.replaceGradleDependencyVersion(
+                artifact = "$projectGroup:$projectName",
+                newVersion = projectVersion
+            )
+        }
 
         if (newContent == oldContent) {
             throw GradleException(
                 "Dependency is either already the most recent version, " +
                         "or no matching dependency reference found in README.md. " +
-                        "Expected format: $projectGroup:$projectName[-platform]:x.y.z[:classifier]"
+                        "Expected format: $projectGroup:$projectName[-platform]:x.y.z[:classifier]" +
+                        if (projectName == "xemantic-conventions") {
+                            " or xemanticConventionsPlugin = \"x.y.z\""
+                        } else {
+                            ""
+                        }
             )
         } else {
             readmeFile.writeText(newContent)

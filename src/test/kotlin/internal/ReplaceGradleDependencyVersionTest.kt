@@ -208,4 +208,79 @@ class ReplaceGradleDependencyVersionTest {
         assert(input.replaceGradleDependencyVersion("com.example:my-project", "2.0.0") == expected)
     }
 
+    @Test
+    fun `should replace TOML version reference`() {
+        val input = """
+            [versions]
+            xemanticConventionsPlugin = "0.4.3"
+        """.trimIndent()
+        val expected = """
+            [versions]
+            xemanticConventionsPlugin = "1.0.0"
+        """.trimIndent()
+        assert(input.replaceTomlVersion("xemanticConventionsPlugin", "1.0.0") == expected)
+    }
+
+    @Test
+    fun `should replace TOML version reference with varying whitespace`() {
+        val input = """
+            [versions]
+            xemanticConventionsPlugin   =   "0.4.3"
+        """.trimIndent()
+        val expected = """
+            [versions]
+            xemanticConventionsPlugin = "1.0.0"
+        """.trimIndent()
+        assert(input.replaceTomlVersion("xemanticConventionsPlugin", "1.0.0") == expected)
+    }
+
+    @Test
+    fun `should preserve indentation when replacing TOML version`() {
+        val input = """
+            [versions]
+              xemanticConventionsPlugin = "0.4.3"
+        """.trimIndent()
+        val expected = """
+            [versions]
+              xemanticConventionsPlugin = "1.0.0"
+        """.trimIndent()
+        assert(input.replaceTomlVersion("xemanticConventionsPlugin", "1.0.0") == expected)
+    }
+
+    @Test
+    fun `should not replace TOML version for different reference name`() {
+        val input = """
+            [versions]
+            xemanticConventionsPlugin = "0.4.3"
+            otherPlugin = "2.0.0"
+        """.trimIndent()
+        val expected = """
+            [versions]
+            xemanticConventionsPlugin = "1.0.0"
+            otherPlugin = "2.0.0"
+        """.trimIndent()
+        assert(input.replaceTomlVersion("xemanticConventionsPlugin", "1.0.0") == expected)
+    }
+
+    @Test
+    fun `should handle TOML version in full version catalog context`() {
+        val input = """
+            [versions]
+            kotlin = "2.1.0"
+            xemanticConventionsPlugin = "0.4.3"
+
+            [plugins]
+            xemantic-conventions = { id = "com.xemantic.gradle.xemantic-conventions", version.ref = "xemanticConventionsPlugin" }
+        """.trimIndent()
+        val expected = """
+            [versions]
+            kotlin = "2.1.0"
+            xemanticConventionsPlugin = "1.0.0"
+
+            [plugins]
+            xemantic-conventions = { id = "com.xemantic.gradle.xemantic-conventions", version.ref = "xemanticConventionsPlugin" }
+        """.trimIndent()
+        assert(input.replaceTomlVersion("xemanticConventionsPlugin", "1.0.0") == expected)
+    }
+
 }

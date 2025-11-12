@@ -21,8 +21,8 @@ plugins {
 group = "com.xemantic.gradle"
 
 xemantic {
-    description = "Sets up standard gradle conventions for Xemantic's projects"
-    inceptionYear = 2025
+    description = "Gradle plugin setting up standard conventions for Xemantic's projects"
+    inceptionYear = "2025"
     applyAllConventions()
 }
 
@@ -84,12 +84,6 @@ powerAssert {
         "com.xemantic.kotlin.test.assert",
         "com.xemantic.kotlin.test.have"
     )
-}
-
-// Fix for Gradle 9.2.0 task dependency validation with gradle-plugin-publish
-// The pluginMaven publication's signing task needs explicit dependency declaration
-tasks.withType<PublishToMavenRepository>().configureEach {
-    dependsOn(tasks.withType<Sign>())
 }
 
 mavenPublishing {

@@ -246,4 +246,103 @@ class UpdateVersionInReadmeTest {
         assert(updatedReadme.contains("com.example:my-project:1.0.1"))
     }
 
+    @Test
+    fun `should update TOML version for xemantic-conventions project`() {
+        // given
+        project = ProjectBuilder.builder()
+            .withProjectDir(testProjectDir)
+            .withName("xemantic-conventions")
+            .build()
+        project.group = "com.xemantic.gradle"
+        project.version = "1.0.0"
+        task = project.tasks.register(
+            "updateVersionInReadme",
+            UpdateVersionInReadme::class.java
+        ).get()
+
+        val readme = File(testProjectDir, "README.md")
+        readme.writeText("""
+            # Usage
+
+            ```toml
+            [versions]
+            xemanticConventionsPlugin = "0.4.3"
+
+            [plugins]
+            xemantic-conventions = { id = "com.xemantic.gradle.xemantic-conventions", version.ref = "xemanticConventionsPlugin" }
+            ```
+        """.trimIndent())
+
+        // when
+        task.action()
+
+        // then
+        val updatedReadme = readme.readText()
+        assert(updatedReadme.contains("""xemanticConventionsPlugin = "1.0.0""""))
+    }
+
+    @Test
+    fun `should update both Maven coordinates and TOML version for xemantic-conventions project`() {
+        // given
+        project = ProjectBuilder.builder()
+            .withProjectDir(testProjectDir)
+            .withName("xemantic-conventions")
+            .build()
+        project.group = "com.xemantic.gradle"
+        project.version = "1.0.0"
+        task = project.tasks.register(
+            "updateVersionInReadme",
+            UpdateVersionInReadme::class.java
+        ).get()
+
+        val readme = File(testProjectDir, "README.md")
+        readme.writeText("""
+            # Usage
+
+            You can use Maven coordinates:
+            ```kotlin
+            implementation("com.xemantic.gradle:xemantic-conventions:0.4.3")
+            ```
+
+            Or TOML version catalog:
+            ```toml
+            [versions]
+            xemanticConventionsPlugin = "0.4.3"
+            ```
+        """.trimIndent())
+
+        // when
+        task.action()
+
+        // then
+        val updatedReadme = readme.readText()
+        assert(updatedReadme.contains("""implementation("com.xemantic.gradle:xemantic-conventions:1.0.0")"""))
+        assert(updatedReadme.contains("""xemanticConventionsPlugin = "1.0.0""""))
+    }
+
+    @Test
+    fun `should not update TOML version for non-xemantic-conventions projects`() {
+        // given - project is NOT named "xemantic-conventions"
+        val readme = File(testProjectDir, "README.md")
+        readme.writeText("""
+            # My Project
+
+            ```kotlin
+            dependencies {
+                implementation("com.example:my-project:1.0.0")
+            }
+            ```
+
+            This also mentions xemanticConventionsPlugin = "0.4.3" but shouldn't be touched.
+        """.trimIndent())
+
+        // when
+        task.action()
+
+        // then - only Maven coordinates should be updated
+        val updatedReadme = readme.readText()
+        assert(updatedReadme.contains("com.example:my-project:1.0.1"))
+        assert(updatedReadme.contains("""xemanticConventionsPlugin = "0.4.3"""")) // unchanged
+    }
+
 }
