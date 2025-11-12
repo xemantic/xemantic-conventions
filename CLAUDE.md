@@ -18,7 +18,7 @@ This is a Gradle plugin (`com.xemantic.gradle.xemantic-conventions`) that centra
 ### Running a single test
 ```bash
 ./gradlew test --tests "ClassName.testMethodName"
-# Example: ./gradlew test --tests "UpdateVersionInReadmeTest.shouldReplaceGradleDependencyVersion"
+# Example: ./gradlew test --tests "UpdateVersionsAfterReleaseTest.shouldReplaceGradleDependencyVersion"
 ```
 
 ### Documentation
@@ -31,7 +31,7 @@ This is a Gradle plugin (`com.xemantic.gradle.xemantic-conventions`) that centra
 ./gradlew publish                                    # Publish to staging or GitHub Packages
 ./gradlew -Pversion=X.Y.Z publish                    # Publish with specific version
 ./gradlew jreleaserFullRelease                       # Deploy to Maven Central and announce
-./gradlew updateVersionInReadme                      # Update version in README.md
+./gradlew updateVersionsAfterRelease                 # Update versions after release (README.md and gradle.properties)
 ```
 
 ### Dependencies
@@ -66,7 +66,7 @@ The plugin automatically configures:
 
 - **XemanticConfiguration.kt**: Main DSL configuration class, provides computed properties like `copyright`, `buildTime`, `releasePageUrl`, `isReleaseBuild`
 - **Publishing.kt**: Maven POM configuration with GitHub/Maven Central metadata
-- **UpdateVersionInReadme.kt**: Task to automatically update dependency versions in README.md
+- **UpdateVersionsAfterRelease.kt**: Task to automatically update dependency versions in README.md and bump version in gradle.properties to next snapshot
 - **License.kt**: Enum of supported open-source licenses with SPDX identifiers
 
 ### Publishing Flow

@@ -25,8 +25,8 @@ public class XemanticConventionsPlugin : Plugin<Project> {
     override fun apply(project: Project) {
 
         project.tasks.register(
-            "updateVersionInReadme",
-            UpdateVersionInReadme::class.java
+            "updateVersionsAfterRelease",
+            UpdateVersionsAfterRelease::class.java
         )
 
         val xemantic = project.extensions.create(

@@ -27,13 +27,13 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import kotlin.test.assertFailsWith
 
-class UpdateVersionInReadmeTest {
+class UpdateVersionsAfterReleaseTest {
 
     @TempDir
     lateinit var testProjectDir: File
 
     private lateinit var project: Project
-    private lateinit var task: UpdateVersionInReadme
+    private lateinit var task: UpdateVersionsAfterRelease
 
     @BeforeEach
     fun setup() {
@@ -44,8 +44,8 @@ class UpdateVersionInReadmeTest {
         project.group = "com.example"
         project.version = "1.0.1"
         task = project.tasks.register(
-            "updateVersionInReadme",
-            UpdateVersionInReadme::class.java
+            "updateVersionsAfterRelease",
+            UpdateVersionsAfterRelease::class.java
         ).get()
     }
 
@@ -256,8 +256,8 @@ class UpdateVersionInReadmeTest {
         project.group = "com.xemantic.gradle"
         project.version = "1.0.0"
         task = project.tasks.register(
-            "updateVersionInReadme",
-            UpdateVersionInReadme::class.java
+            "updateVersionsAfterRelease",
+            UpdateVersionsAfterRelease::class.java
         ).get()
 
         val readme = File(testProjectDir, "README.md")
@@ -291,8 +291,8 @@ class UpdateVersionInReadmeTest {
         project.group = "com.xemantic.gradle"
         project.version = "1.0.0"
         task = project.tasks.register(
-            "updateVersionInReadme",
-            UpdateVersionInReadme::class.java
+            "updateVersionsAfterRelease",
+            UpdateVersionsAfterRelease::class.java
         ).get()
 
         val readme = File(testProjectDir, "README.md")
@@ -355,8 +355,8 @@ class UpdateVersionInReadmeTest {
         project.group = "com.xemantic.gradle"
         project.version = "0.6.4"
         task = project.tasks.register(
-            "updateVersionInReadme",
-            UpdateVersionInReadme::class.java
+            "updateVersionsAfterRelease",
+            UpdateVersionsAfterRelease::class.java
         ).get()
 
         val readme = File(testProjectDir, "README.md")
