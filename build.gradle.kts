@@ -93,6 +93,7 @@ tasks.withType<Test> {
 }
 
 dependencies {
+    implementation(libs.kotlin.semver)
     compileOnly(libs.verplugin)
     compileOnly(libs.jreleaser)
     testImplementation(libs.kotlin.test)

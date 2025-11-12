@@ -23,12 +23,16 @@ import java.io.File
 
 /**
  * Defines `xemantic:updateVersionInReadme` gradle task.
+ *
+ * This task performs two updates when releasing:
+ * 1. Updates the artifact version in README.md to the current release version
+ * 2. Updates the version in gradle.properties to the next snapshot version
  */
 internal abstract class UpdateVersionInReadme : DefaultTask() {
 
     init {
         group = "xemantic"
-        description = "Updates artifact version in README.md file"
+        description = "Updates artifact version in README.md and gradle.properties with next snapshot version"
     }
 
     @TaskAction
@@ -37,6 +41,18 @@ internal abstract class UpdateVersionInReadme : DefaultTask() {
         val projectName = project.name
         val projectVersion = project.version.toString()
 
+        // Update README.md with current release version
+        updateReadmeFile(projectGroup, projectName, projectVersion)
+
+        // Update gradle.properties with next snapshot version
+        updateGradleProperties(projectVersion)
+    }
+
+    private fun updateReadmeFile(
+        projectGroup: String,
+        projectName: String,
+        projectVersion: String
+    ) {
         val readmeFile = File(project.rootDir, "README.md")
         if (!readmeFile.exists()) {
             throw GradleException(
@@ -60,6 +76,45 @@ internal abstract class UpdateVersionInReadme : DefaultTask() {
             readmeFile.writeText(newContent)
             logger.lifecycle(
                 "Successfully updated version in README.md to $projectVersion"
+            )
+        }
+    }
+
+    private fun updateGradleProperties(projectVersion: String) {
+        val gradlePropertiesFile = File(project.rootDir, "gradle.properties")
+        if (!gradlePropertiesFile.exists()) {
+            logger.lifecycle(
+                "gradle.properties file not found, skipping version update"
+            )
+            return
+        }
+
+        // Calculate next snapshot version
+        val nextSnapshot = try {
+            calculateNextSnapshotVersion(projectVersion)
+        } catch (e: Exception) {
+            logger.warn(
+                "Failed to calculate next snapshot version from $projectVersion: ${e.message}. " +
+                        "gradle.properties will not be updated."
+            )
+            return
+        }
+
+        val oldContent = gradlePropertiesFile.readText()
+        val versionRegex = Regex("^version\\s*=\\s*(.+)$", RegexOption.MULTILINE)
+
+        val newContent = versionRegex.replace(oldContent) {
+            "version=$nextSnapshot"
+        }
+
+        if (newContent != oldContent) {
+            gradlePropertiesFile.writeText(newContent)
+            logger.lifecycle(
+                "Successfully updated version in gradle.properties to $nextSnapshot"
+            )
+        } else {
+            logger.warn(
+                "No version property found in gradle.properties"
             )
         }
     }

@@ -132,4 +132,118 @@ class UpdateVersionInReadmeTest {
         }
     }
 
+    @Test
+    fun `should update both README and gradle properties`() {
+        // given
+        val readme = File(testProjectDir, "README.md")
+        readme.writeText("""
+            # My Project
+
+            ```kotlin
+            dependencies {
+                implementation("com.example:my-project:1.0.0")
+            }
+            ```
+        """.trimIndent())
+
+        val gradleProperties = File(testProjectDir, "gradle.properties")
+        gradleProperties.writeText("""
+            kotlin.code.style=official
+            version=1.0.0-SNAPSHOT
+        """.trimIndent())
+
+        // when
+        task.action()
+
+        // then
+        val updatedReadme = readme.readText()
+        assert(updatedReadme.contains("com.example:my-project:1.0.1"))
+
+        val updatedProperties = gradleProperties.readText()
+        assert(updatedProperties.contains("version=1.0.2-SNAPSHOT"))
+    }
+
+    @Test
+    fun `should update gradle properties with next snapshot after major release`() {
+        // given
+        project.version = "2.0.0"
+        val readme = File(testProjectDir, "README.md")
+        readme.writeText("""
+            implementation("com.example:my-project:1.0.0")
+        """.trimIndent())
+
+        val gradleProperties = File(testProjectDir, "gradle.properties")
+        gradleProperties.writeText("version=1.5.0-SNAPSHOT")
+
+        // when
+        task.action()
+
+        // then
+        val updatedProperties = gradleProperties.readText()
+        assert(updatedProperties.contains("version=2.0.1-SNAPSHOT"))
+    }
+
+    @Test
+    fun `should update gradle properties with next snapshot after minor release`() {
+        // given
+        project.version = "1.5.0"
+        val readme = File(testProjectDir, "README.md")
+        readme.writeText("""
+            implementation("com.example:my-project:1.0.0")
+        """.trimIndent())
+
+        val gradleProperties = File(testProjectDir, "gradle.properties")
+        gradleProperties.writeText("version=1.4.9-SNAPSHOT")
+
+        // when
+        task.action()
+
+        // then
+        val updatedProperties = gradleProperties.readText()
+        assert(updatedProperties.contains("version=1.5.1-SNAPSHOT"))
+    }
+
+    @Test
+    fun `should preserve other properties in gradle properties file`() {
+        // given
+        val readme = File(testProjectDir, "README.md")
+        readme.writeText("""
+            implementation("com.example:my-project:1.0.0")
+        """.trimIndent())
+
+        val gradleProperties = File(testProjectDir, "gradle.properties")
+        gradleProperties.writeText("""
+            kotlin.code.style=official
+            org.gradle.jvmargs=-Xmx2g
+            version=1.0.0-SNAPSHOT
+            someOtherProperty=value
+        """.trimIndent())
+
+        // when
+        task.action()
+
+        // then
+        val updatedProperties = gradleProperties.readText()
+        assert(updatedProperties.contains("kotlin.code.style=official"))
+        assert(updatedProperties.contains("org.gradle.jvmargs=-Xmx2g"))
+        assert(updatedProperties.contains("version=1.0.2-SNAPSHOT"))
+        assert(updatedProperties.contains("someOtherProperty=value"))
+    }
+
+    @Test
+    fun `should not fail when gradle properties file does not exist`() {
+        // given
+        val readme = File(testProjectDir, "README.md")
+        readme.writeText("""
+            implementation("com.example:my-project:1.0.0")
+        """.trimIndent())
+
+        // when - gradle.properties doesn't exist
+        task.action()
+
+        // then - should succeed and only update README
+        val updatedReadme = readme.readText()
+        assert(updatedReadme.contains("com.example:my-project:1.0.1"))
+    }
+
 }

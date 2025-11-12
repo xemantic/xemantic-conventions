@@ -3,6 +3,7 @@ java = "17"
 kotlin = "2.2.20" # the highest version supported by the plugin at the moment
 
 xemanticKotlinTest = "1.15.2"
+kotlinSemver = "3.0.0"
 
 kotlinDslPlugin = "6.2.0" # the highest version supported by gradle 9.1.0 at the moment
 versionsPlugin = "0.53.0"
@@ -15,6 +16,7 @@ xemanticConventionsPlugin = "0.4.3"
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 xemantic-kotlin-test = { module = "com.xemantic.kotlin:xemantic-kotlin-test", version.ref = "xemanticKotlinTest" }
+kotlin-semver = { module = "io.github.z4kn4fein:semver", version.ref = "kotlinSemver" }
 jreleaser = { module = "org.jreleaser:jreleaser-gradle-plugin", version.ref = "jreleaserPlugin" }
 verplugin = { module = "com.github.ben-manes.versions:com.github.ben-manes.versions.gradle.plugin", version.ref = "versionsPlugin" }
 
