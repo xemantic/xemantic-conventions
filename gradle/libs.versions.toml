@@ -10,7 +10,7 @@ dokkaPlugin = "2.1.0"
 jreleaserPlugin = "1.20.0" # version 1.21.0 has a critical gradle bug
 binaryCompatibilityValidatorPlugin = "0.18.1"
 mavenPublishPlugin = "0.35.0"
-xemanticConventionsPlugin = "0.6.5"
+xemanticConventionsPlugin = "0.6.7"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
