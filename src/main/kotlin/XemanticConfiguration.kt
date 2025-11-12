@@ -22,9 +22,11 @@ import com.xemantic.gradle.conventions.internal.configureTestReporting
 import com.xemantic.gradle.conventions.internal.populateJarManifest
 import org.gradle.api.GradleException
 import org.gradle.api.Project
+import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.kotlin.dsl.withType
+import org.gradle.plugins.signing.Sign
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -36,7 +38,7 @@ public abstract class XemanticConfiguration @Inject constructor(
 
     public var description: String? = null
 
-    public var inceptionYear: Int? = null
+    public var inceptionYear: String? = null
 
     public var organization: String = "Xemantic"
 
@@ -47,7 +49,7 @@ public abstract class XemanticConfiguration @Inject constructor(
     public val url: String = "https://github.com/$gitHubAccount/${project.rootProject.name}"
 
     public var copyright: String =
-            "© ${if (inceptionYear != now.year) "$inceptionYear-" else ""}${now.year} $organization"
+            "© ${if (inceptionYear != now.year.toString()) "$inceptionYear-" else ""}${now.year} $organization"
 
     public val isReleaseBuild: Boolean = !(project.version as String).endsWith("-SNAPSHOT")
 
@@ -70,6 +72,14 @@ public abstract class XemanticConfiguration @Inject constructor(
                 "Remember to add xemantic { } section to your build.gradle.kts, " +
                         "and fill it with required parameters: ${e.message}"
             )
+        }
+    }
+
+    public fun applySignBeforePublishing() {
+        // Fix for Gradle 9.2.0 task dependency validation with gradle-plugin-publish
+        // The pluginMaven publication's signing task needs explicit dependency declaration
+        project.tasks.withType<PublishToMavenRepository>().configureEach {
+            dependsOn(project.tasks.withType<Sign>())
         }
     }
 
@@ -109,6 +119,7 @@ public abstract class XemanticConfiguration @Inject constructor(
     }
 
     public fun applyAllConventions() {
+        applySignBeforePublishing()
         applyJarManifests()
         applyAxTestReporting()
         applyJReleaserConventions()

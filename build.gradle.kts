@@ -1,11 +1,11 @@
 @file:OptIn(ExperimentalKotlinGradlePluginApi::class)
 
-import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.KotlinJvm
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jreleaser.model.Active
 
 plugins {
     `kotlin-dsl`
@@ -15,10 +15,16 @@ plugins {
     alias(libs.plugins.power.assert)
     alias(libs.plugins.binary.compatibility.validator)
     alias(libs.plugins.maven.publish)
-//    alias(libs.plugins.xemantic.conventions) // eating own dog food
+    alias(libs.plugins.xemantic.conventions) // eating own dog food
 }
 
 group = "com.xemantic.gradle"
+
+xemantic {
+    description = "Sets up standard gradle conventions for Xemantic's projects"
+    inceptionYear = 2025
+    applyAllConventions()
+}
 
 fun MavenPomDeveloperSpec.projectDevs() {
     developer {
@@ -28,27 +34,6 @@ fun MavenPomDeveloperSpec.projectDevs() {
     }
 }
 
-//xemantic {
-//    description = "Sets up standard gradle conventions for Xemantic's projects"
-//    inceptionYear = 2025
-//    license = License.APACHE
-//    developer(
-//        id = "morisil",
-//        name = "Kazik Pogoda",
-//        email = "morisil@xemantic.com"
-//    )
-//}
-
-//val releaseAnnouncementSubject = """🚀 ${rootProject.name} $version has been released!"""
-//
-//val releaseAnnouncement = """
-//$releaseAnnouncementSubject
-//
-//${xemantic.description}
-//
-//${xemantic.releasePageUrl}
-//"""
-
 gradlePlugin {
     website = "https://github.com/xemantic/xemantic-gradle-plugin"
     vcsUrl = "https://github.com/xemantic/xemantic-gradle-plugin.git"
@@ -56,8 +41,7 @@ gradlePlugin {
         create("xemantic-conventions") {
             id = "$group.xemantic-conventions"
             implementationClass = "com.xemantic.gradle.conventions.XemanticConventionsPlugin"
-            //description = xemantic.description
-            description = "Xemantic conventions plugin"
+            description = xemantic.description
         }
     }
 }
@@ -78,15 +62,9 @@ kotlin {
     }
 }
 
-//java {
-//    withSourcesJar()
-//}
-
 tasks.withType<JavaCompile> {
-        options.release.set(javaTarget.toInt())
-//        targetCompatibility = javaTarget
-//        sourceCompatibility = javaTarget
-    }
+    options.release.set(javaTarget.toInt())
+}
 
 tasks.withType<Test> {
     useJUnitPlatform()
@@ -108,6 +86,12 @@ powerAssert {
     )
 }
 
+// Fix for Gradle 9.2.0 task dependency validation with gradle-plugin-publish
+// The pluginMaven publication's signing task needs explicit dependency declaration
+tasks.withType<PublishToMavenRepository>().configureEach {
+    dependsOn(tasks.withType<Sign>())
+}
+
 mavenPublishing {
 
     configure(
@@ -123,12 +107,6 @@ mavenPublishing {
         automaticRelease = true
     )
 
-    // Fix for Gradle 9.2.0 task dependency validation with gradle-plugin-publish
-    // The pluginMaven publication's signing task needs explicit dependency declaration
-    tasks.withType<PublishToMavenRepository>().configureEach {
-        dependsOn(tasks.withType<Sign>())
-    }
-
     coordinates(
         groupId = group.toString(),
         artifactId = rootProject.name,
@@ -138,13 +116,13 @@ mavenPublishing {
     pom {
 
         name = rootProject.name
-        description = "Sets up standard gradle conventions for Xemantic's projects"
-        inceptionYear = "2025"
-        url = "https://github.com/xemantic/${rootProject.name}"
+        description = xemantic.description
+        inceptionYear = xemantic.inceptionYear.toString()
+        url = "https://github.com/${xemantic.gitHubAccount}}/${rootProject.name}"
 
         organization {
-            name = "Xemantic"
-            url = "https://xemantic.com"
+            name = xemantic.organization
+            url = xemantic.organizationUrl
         }
 
         licenses {
@@ -156,19 +134,19 @@ mavenPublishing {
         }
 
         scm {
-            url = "https://github.com/xemantic/${rootProject.name}"
-            connection = "scm:git:git://github.com/xemantic/${rootProject.name}.git"
-            developerConnection = "scm:git:ssh://git@github.com/xemantic/${rootProject.name}.git"
+            url = "https://github.com/${xemantic.gitHubAccount}/${rootProject.name}"
+            connection = "scm:git:git://github.com/${xemantic.gitHubAccount}/${rootProject.name}.git"
+            developerConnection = "scm:git:ssh://git@github.com/${xemantic.gitHubAccount}/${rootProject.name}.git"
         }
 
         ciManagement {
             system = "GitHub"
-            url = "https://github.com/xemantic/${rootProject.name}/actions"
+            url = "https://github.com/${xemantic.gitHubAccount}/${rootProject.name}/actions"
         }
 
         issueManagement {
             system = "GitHub"
-            url = "https://github.com/xemantic/${rootProject.name}/issues"
+            url = "https://github.com/${xemantic.gitHubAccount}/${rootProject.name}/issues"
         }
 
         developers {
@@ -179,71 +157,40 @@ mavenPublishing {
 
 }
 
-// https://kotlinlang.org/docs/dokka-migration.html#adjust-configuration-options
-//dokka {
-//    pluginsConfiguration.html {
-//        footerMessage.set(xemantic.copyright)
-//    }
-//}
-
-//val javadocJar by tasks.registering(Jar::class) {
-//    archiveClassifier.set("javadoc")
-//    from(tasks.dokkaGeneratePublicationHtml)
-//}
-
-//jreleaser {
-//    release {
-//        github {
-//            skipRelease = true // we are releasing through GitHub UI
-//            skipTag = true
-//            token = "empty"
-//            changelog {
-//                enabled = false
-//            }
-//        }
-//    }
-//    checksum {
-//        individual = false
-//        artifacts = false
-//        files = false
-//    }
-//    announce {
-//        webhooks {
-//            create("discord") {
-//                active = Active.ALWAYS
-//                message = releaseAnnouncement
-//                messageProperty = "content"
-//                structuredMessage = true
-//            }
-//        }
-//        linkedin {
-//            active = Active.ALWAYS
-//            subject = releaseAnnouncementSubject
-//            message = releaseAnnouncement
-//        }
-//        bluesky {
-//            active = Active.ALWAYS
-//            status = releaseAnnouncement
-//        }
-//    }
-//}
-
-val unstableKeywords = listOf("alpha", "beta", "rc")
-
-fun isNonStable(
-    version: String
-) = version.lowercase().let { normalizedVersion ->
-    unstableKeywords.any {
-        it in normalizedVersion
+dokka {
+    pluginsConfiguration.html {
+        footerMessage.set(xemantic.copyright)
     }
 }
 
-tasks.withType<DependencyUpdatesTask> {
-    rejectVersionIf {
-        isNonStable(candidate.version)
-    }
-}
+val releaseAnnouncementSubject = """🚀 ${rootProject.name} $version has been released!"""
 
-tasks.named("jreleaserAnnounce") {
-    dependsOn("build", "publishToMavenCentral")
+val releaseAnnouncement = """
+$releaseAnnouncementSubject
+
+${xemantic.description}
+
+${xemantic.releasePageUrl}
+"""
+
+jreleaser {
+    announce {
+        webhooks {
+            create("discord") {
+                active = Active.ALWAYS
+                message = releaseAnnouncement
+                messageProperty = "content"
+                structuredMessage = true
+            }
+        }
+        linkedin {
+            active = Active.ALWAYS
+            subject = releaseAnnouncementSubject
+            message = releaseAnnouncement
+        }
+        bluesky {
+            active = Active.ALWAYS
+            status = releaseAnnouncement
+        }
+    }
 }

@@ -25,6 +25,10 @@ internal fun Project.configureJReleaserConventions(
     config: XemanticConfiguration
 ) {
 
+    tasks.named("jreleaserAnnounce") {
+        dependsOn("build", "publishToMavenCentral")
+    }
+
     // we are not releasing with jreleaser, just announcing
     // still we need default values here to pass validations
     extensions.configure<JReleaserExtension> {
