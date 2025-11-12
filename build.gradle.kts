@@ -98,7 +98,8 @@ mavenPublishing {
     signAllPublications()
 
     publishToMavenCentral(
-        automaticRelease = true
+        automaticRelease = true,
+        validateDeployment = false // sometimes it takes forever, we don't want to that build fails
     )
 
     coordinates(
