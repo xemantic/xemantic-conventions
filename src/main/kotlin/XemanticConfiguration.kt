@@ -85,7 +85,7 @@ public abstract class XemanticConfiguration @Inject constructor(
 
     public fun applyJarManifests() {
         project.allprojects {
-            tasks.withType<Jar> {
+            tasks.withType<Jar>().configureEach {
                 populateJarManifest(project)
             }
         }
