@@ -39,7 +39,7 @@ class XemanticGradlePluginTest {
 //            }
 //        }
         project.plugins.apply("com.xemantic.gradle.xemantic-conventions")
-        assertNotNull(project.tasks.findByName("updateVersionInReadme"))
+        assertNotNull(project.tasks.findByName("updateVersionsAfterRelease"))
     }
 
 }

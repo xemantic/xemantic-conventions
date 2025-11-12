@@ -22,17 +22,17 @@ import org.gradle.api.tasks.TaskAction
 import java.io.File
 
 /**
- * Defines `xemantic:updateVersionInReadme` gradle task.
+ * Defines `xemantic:updateVersionsAfterRelease` gradle task.
  *
- * This task performs two updates when releasing:
+ * This task performs two updates after a release is published:
  * 1. Updates the artifact version in README.md to the current release version
  * 2. Updates the version in gradle.properties to the next snapshot version
  */
-internal abstract class UpdateVersionInReadme : DefaultTask() {
+internal abstract class UpdateVersionsAfterRelease : DefaultTask() {
 
     init {
         group = "xemantic"
-        description = "Updates artifact version in README.md and gradle.properties with next snapshot version"
+        description = "Updates artifact version in README.md and version in gradle.properties to next snapshot"
     }
 
     @TaskAction
