@@ -345,4 +345,48 @@ class UpdateVersionInReadmeTest {
         assert(updatedReadme.contains("""xemanticConventionsPlugin = "0.4.3"""")) // unchanged
     }
 
+    @Test
+    fun `should update TOML version in actual README format`() {
+        // given
+        project = ProjectBuilder.builder()
+            .withProjectDir(testProjectDir)
+            .withName("xemantic-conventions")
+            .build()
+        project.group = "com.xemantic.gradle"
+        project.version = "0.6.4"
+        task = project.tasks.register(
+            "updateVersionInReadme",
+            UpdateVersionInReadme::class.java
+        ).get()
+
+        val readme = File(testProjectDir, "README.md")
+        readme.writeText("""
+            ## Usage
+
+            To you `lib.versions.toml` (located in the `gradle` dir) add:
+
+            ```toml
+            [versions]
+
+            # your other versions ...
+            xemanticConventionsPlugin = "0.4.3"
+
+            [libraries]
+            # your libraries ...
+
+            [plugins]
+            # your other plugins ...
+            xemantic-conventions = { id = "com.xemantic.gradle.xemantic-conventions", version.ref = "xemanticConventionsPlugin" }
+
+            ```
+        """.trimIndent())
+
+        // when
+        task.action()
+
+        // then
+        val updatedReadme = readme.readText()
+        assert(updatedReadme.contains("""xemanticConventionsPlugin = "0.6.4""""))
+    }
+
 }
