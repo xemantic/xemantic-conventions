@@ -29,6 +29,11 @@ public class XemanticConventionsPlugin : Plugin<Project> {
             UpdateVersionInReadme::class.java
         )
 
+        val xemantic = project.extensions.create(
+            "xemantic",
+            XemanticConfiguration::class.java
+        )
+
         project.afterEvaluate {
             xemantic.validate()
         }
