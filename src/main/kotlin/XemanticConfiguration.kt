@@ -109,9 +109,7 @@ public abstract class XemanticConfiguration @Inject constructor(
     }
 
     public fun applyReportOnlyStableDependencyUpdates() {
-        project.pluginManager.withPlugin(
-            "com.github.benmanes.gradle.versions.updates"
-        ) {
+        project.pluginManager.withPlugin("com.github.ben-manes.versions") {
             project.configureReportOnlyStableDependencyUpdates(
                 config = this@XemanticConfiguration
             )
