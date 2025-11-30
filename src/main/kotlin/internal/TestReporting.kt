@@ -40,12 +40,21 @@ internal fun AbstractTestTask.configureTestReporting() {
         showCauses = false
     }
 
+    val testOutputs = mutableMapOf<String, StringBuilder>()
+
+    addTestOutputListener { descriptor, event ->
+        val key = "${descriptor.className}.${descriptor.name}"
+        testOutputs.getOrPut(key) { StringBuilder() }.append(event.message)
+    }
+
     afterTest(KotlinClosure2({ descriptor: TestDescriptor, result: TestResult ->
+        val key = "${descriptor.className}.${descriptor.name}"
+        val output = testOutputs.remove(key)?.toString()?.trim()
+
         if (result.resultType == TestResult.ResultType.FAILURE) {
             val platform = extractPlatform(name)
-            val testName = "${descriptor.className}.${descriptor.name}"
 
-            logger.lifecycle("\n<test-failure test=\"$testName\" platform=\"$platform\">")
+            logger.lifecycle("\n<test-failure test=\"$key\" platform=\"$platform\">")
             logger.lifecycle("<message>")
             result.exceptions.forEach { exception ->
                 val message = exception.message ?: exception.toString()
@@ -54,6 +63,12 @@ internal fun AbstractTestTask.configureTestReporting() {
                 )
             }
             logger.lifecycle("</message>")
+
+            if (!output.isNullOrEmpty()) {
+                logger.lifecycle("<output>")
+                logger.lifecycle(output)
+                logger.lifecycle("</output>")
+            }
 
             result.exceptions.forEach { exception ->
                 logger.lifecycle("<stacktrace>")
@@ -76,10 +91,10 @@ internal fun AbstractTestTask.configureTestReporting() {
  * - "jvmTest" -> "jvm"
  * - "wasmJsTest" -> "wasmJs"
  * - "test" -> "jvm" (default platform)
- * - "allTests" -> "all"
+ * - "allTests" -> "unknown" (ends with "Tests", not "Test")
  * - "check" -> "unknown"
  */
-private fun extractPlatform(taskName: String): String {
+internal fun extractPlatform(taskName: String): String {
     return when {
         taskName == "test" -> "jvm"
         taskName.endsWith("Test") -> taskName.removeSuffix("Test")
