@@ -19,6 +19,7 @@ package com.xemantic.gradle.conventions.internal
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.UntrackedTask
 import java.io.File
 
 /**
@@ -28,6 +29,11 @@ import java.io.File
  * 1. Updates the artifact version in README.md to the current release version
  * 2. Updates the version in gradle.properties to the next snapshot version
  */
+@UntrackedTask(
+    because = "it rewrites README.md and gradle.properties in place, " +
+            "which are sources rather than declared outputs, " +
+            "so it must run on every invocation and must never be cached"
+)
 internal abstract class UpdateVersionsAfterRelease : DefaultTask() {
 
     init {

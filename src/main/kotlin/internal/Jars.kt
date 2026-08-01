@@ -16,23 +16,33 @@
 
 package com.xemantic.gradle.conventions.internal
 
-import com.xemantic.gradle.conventions.xemantic
-import org.gradle.api.Project
-import org.gradle.api.tasks.bundling.Jar
+import com.xemantic.gradle.conventions.XemanticConfiguration
+import org.gradle.jvm.tasks.Jar
 
 /**
  * Populates JAR manifest with Xemantic-specific and build specific attributes.
  *
- * @param project the gradle project.
+ * The attribute values are supplied as providers rather than resolved eagerly. When the root
+ * project applies these conventions to its subprojects, this configuration runs while the
+ * subproject's `Jar` task is still being created - before the `base` plugin has had a chance to
+ * set the `archiveBaseName` convention - so reading the values here would fail with
+ * "Cannot query the value of task ':sub:jar' property 'archiveBaseName'".
+ *
+ * The configuration is taken from [config] rather than looked up on the task's own project,
+ * because in a multimodule build the `xemantic { }` extension only exists in the project which
+ * applies the plugin - typically the root - while the `Jar` tasks being configured belong to
+ * the subprojects.
+ *
+ * @param config the configuration of the project applying the conventions.
  */
 internal fun Jar.populateJarManifest(
-    project: Project,
+    config: XemanticConfiguration,
 ) {
     manifest {
         attributes.let {
-            it["Implementation-Title"] = archiveBaseName.get()
-            it["Implementation-Version"] = archiveVersion.get()
-            it["Implementation-Vendor"] = project.xemantic.organization
+            it["Implementation-Title"] = archiveBaseName
+            it["Implementation-Version"] = archiveVersion
+            it["Implementation-Vendor"] = project.provider { config.organization }
             it["Implementation-Vendor-Id"] = project.rootProject.name
             it["Created-By"] = "gradle"
         }

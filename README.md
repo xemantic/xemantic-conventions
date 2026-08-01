@@ -24,12 +24,14 @@ Setting up a gradle project for a Kotlin multiplatform library can be hassle. Th
 
 ## Features
 
-- **JAR Manifest Configuration**: Automatically populates implementation metadata, build time, and license info
-- **Maven Central Publishing**: Configures POM with organization, SCM, CI, and issue management metadata
-- **PGP Signing**: Supports in-memory PGP keys from project properties
-- **AI-Friendly Test Logging**: Test failures are logged in a structured, machine-readable format optimized for processing by coding AI agents (like Claude Code). Only failures and skipped tests are logged with full stack traces to reduce noise and make CI/CD output easily digestible by both humans and AI tools.
-- **Version Management**: Automated task to update dependency versions in README.md
-- **JReleaser Integration**: Seamless deployment to Maven Central with announcements to Discord, LinkedIn, and Bluesky
+- **JAR Manifest Configuration**: Populates the `Implementation-Title`, `Implementation-Version`, `Implementation-Vendor` and `Implementation-Vendor-Id` manifest attributes from the project metadata,
+  and bundles the project's `LICENSE` file into `META-INF`
+- **AI-Friendly Test Logging**: Test failures are logged in a structured, machine-readable format optimized for processing by coding AI agents (like Claude Code).
+  Only failures and skipped tests are logged, each failure with its message, captured standard output and full stack trace,
+  which reduces noise and makes CI/CD output easily digestible by both humans and AI tools.
+- **Version Management**: The `updateVersionsAfterRelease` task rewrites the released version in `README.md` and sets the version in `gradle.properties` to the next snapshot
+- **JReleaser Integration**: Announces releases on Discord, LinkedIn and Bluesky - the release itself is published by the [maven-publish](https://vanniktech.github.io/gradle-maven-publish-plugin/) plugin,
+  JReleaser is used for announcements only
 
 ## Usage
 
@@ -58,13 +60,27 @@ plugins {
     alias(libs.plugins.kotlin.plugin.power.assert) // optional
     alias(libs.plugins.kotlinx.binary.compatibility.validator) // optional
     alias(libs.plugins.dokka)
-    alias(libs.plugins.versions) // optional
-    `maven-publish`
-    signing
+    alias(libs.plugins.version.catalog.update) // optional
+    alias(libs.plugins.maven.publish) // com.vanniktech.maven.publish, provides the publishToMavenCentral task
     alias(libs.plugins.jreleaser)
     alias(libs.plugins.xemantic.conventions)
 }
+
+xemantic {
+    description = "What this project is about"
+    inceptionYear = "2025"
+    applyAllConventions()
+}
 ```
+
+In a multimodule build apply the plugin to the root project only.
+The conventions reach the subprojects on their own,
+and `jreleaserAnnounce` waits for the `publishToMavenCentral` task of every module that has one,
+so no aggregate task has to be declared by hand.
+
+Dependency versions are not this plugin's concern -
+the [version-catalog-update](https://github.com/littlerobots/version-catalog-update-plugin) plugin
+already provides `pin`, `keep` and `versionSelector` idioms, so configure it directly in the project which needs it.
 
 ## Test configuration
 
