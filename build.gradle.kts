@@ -1,7 +1,5 @@
 @file:OptIn(ExperimentalKotlinGradlePluginApi::class)
 
-import com.vanniktech.maven.publish.JavadocJar
-import com.vanniktech.maven.publish.KotlinJvm
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -10,7 +8,7 @@ import org.jreleaser.model.Active
 plugins {
     `kotlin-dsl`
     alias(libs.plugins.dokka)
-    alias(libs.plugins.versions)
+    alias(libs.plugins.version.catalog.update)
     alias(libs.plugins.jreleaser)
     alias(libs.plugins.power.assert)
     alias(libs.plugins.binary.compatibility.validator)
@@ -51,7 +49,7 @@ repositories {
     gradlePluginPortal()
 }
 
-val javaTarget = libs.versions.java.get()
+val javaTarget = libs.versions.javaTarget.get()
 
 kotlin {
     explicitApi()
@@ -72,10 +70,10 @@ tasks.withType<Test> {
 
 dependencies {
     implementation(libs.kotlin.semver)
-    compileOnly(libs.verplugin)
     compileOnly(libs.jreleaser)
     testImplementation(libs.kotlin.test)
     testImplementation(libs.xemantic.kotlin.test)
+    testImplementation(gradleTestKit())
 }
 
 powerAssert {
@@ -86,20 +84,32 @@ powerAssert {
     )
 }
 
-mavenPublishing {
+versionCatalogUpdate {
+    // the version selector is left at the plugin default, PREFER_STABLE, which only accepts an
+    // unstable candidate when the current version is unstable as well - note that the built-in
+    // STABLE selector treats every qualifier as unstable, including classifiers like "-jre",
+    // and would silently downgrade such dependencies
+    // preserve the manual, logically grouped ordering of libs.versions.toml
+    sortByKey = false
+    keep {
+        // not referenced by any library or plugin, so it would be removed otherwise
+        versions.add("javaTarget")
+    }
+    pin {
+        // squeezed between the Kotlin version embedded by `kotlin-dsl`, which is older and makes
+        // it warn about features which might work differently, and the Kotlin version the Gradle
+        // plugin APIs we compile against are built with, which is newer - so it has to be chosen
+        // by hand rather than bumped automatically
+        versions.add("kotlin")
+    }
+}
 
-    configure(
-        KotlinJvm(
-            javadocJar = JavadocJar.Dokka("dokkaGenerateHtml"),
-            sourcesJar = true
-        )
-    )
+mavenPublishing {
 
     signAllPublications()
 
     publishToMavenCentral(
-        automaticRelease = true,
-        validateDeployment = false // sometimes it takes forever, we don't want to that build fails
+        automaticRelease = true
     )
 
     coordinates(

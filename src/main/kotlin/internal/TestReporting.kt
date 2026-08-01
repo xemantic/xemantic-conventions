@@ -18,9 +18,9 @@ package com.xemantic.gradle.conventions.internal
 
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.api.tasks.testing.TestDescriptor
+import org.gradle.api.tasks.testing.TestListener
 import org.gradle.api.tasks.testing.TestResult
 import org.gradle.api.tasks.testing.logging.TestLogEvent
-import org.gradle.kotlin.dsl.KotlinClosure2
 
 /**
  * Rules for logging of tests.
@@ -47,40 +47,51 @@ internal fun AbstractTestTask.configureTestReporting() {
         testOutputs.getOrPut(key) { StringBuilder() }.append(event.message)
     }
 
-    afterTest(KotlinClosure2({ descriptor: TestDescriptor, result: TestResult ->
-        val key = "${descriptor.className}.${descriptor.name}"
-        val output = testOutputs.remove(key)?.toString()?.trim()
+    val platform = extractPlatform(name)
 
-        if (result.resultType == TestResult.ResultType.FAILURE) {
-            val platform = extractPlatform(name)
+    addTestListener(object : TestListener {
 
-            logger.lifecycle("\n<test-failure test=\"$key\" platform=\"$platform\">")
-            logger.lifecycle("<message>")
-            result.exceptions.forEach { exception ->
-                val message = exception.message ?: exception.toString()
-                logger.lifecycle(
-                    message.removePrefix("kotlin.AssertionError: ")
-                )
-            }
-            logger.lifecycle("</message>")
+        override fun beforeSuite(suite: TestDescriptor) {}
 
-            if (!output.isNullOrEmpty()) {
-                logger.lifecycle("<output>")
-                logger.lifecycle(output)
-                logger.lifecycle("</output>")
-            }
+        override fun afterSuite(suite: TestDescriptor, result: TestResult) {}
 
-            result.exceptions.forEach { exception ->
-                logger.lifecycle("<stacktrace>")
-                exception.stackTrace.forEach { element ->
-                    logger.lifecycle("  at $element")
+        override fun beforeTest(testDescriptor: TestDescriptor) {}
+
+        override fun afterTest(testDescriptor: TestDescriptor, result: TestResult) {
+            val key = "${testDescriptor.className}.${testDescriptor.name}"
+            val output = testOutputs.remove(key)?.toString()?.trim()
+
+            if (result.resultType == TestResult.ResultType.FAILURE) {
+
+                logger.lifecycle("\n<test-failure test=\"$key\" platform=\"$platform\">")
+                logger.lifecycle("<message>")
+                result.exceptions.forEach { exception ->
+                    val message = exception.message ?: exception.toString()
+                    logger.lifecycle(
+                        message.removePrefix("kotlin.AssertionError: ")
+                    )
                 }
-                logger.lifecycle("</stacktrace>")
-            }
+                logger.lifecycle("</message>")
 
-            logger.lifecycle("</test-failure>\n")
+                if (!output.isNullOrEmpty()) {
+                    logger.lifecycle("<output>")
+                    logger.lifecycle(output)
+                    logger.lifecycle("</output>")
+                }
+
+                result.exceptions.forEach { exception ->
+                    logger.lifecycle("<stacktrace>")
+                    exception.stackTrace.forEach { element ->
+                        logger.lifecycle("  at $element")
+                    }
+                    logger.lifecycle("</stacktrace>")
+                }
+
+                logger.lifecycle("</test-failure>\n")
+            }
         }
-    }))
+
+    })
 
 }
 
@@ -94,10 +105,8 @@ internal fun AbstractTestTask.configureTestReporting() {
  * - "allTests" -> "unknown" (ends with "Tests", not "Test")
  * - "check" -> "unknown"
  */
-internal fun extractPlatform(taskName: String): String {
-    return when {
-        taskName == "test" -> "jvm"
-        taskName.endsWith("Test") -> taskName.removeSuffix("Test")
-        else -> "unknown"
-    }
+internal fun extractPlatform(taskName: String) = when {
+    taskName == "test" -> "jvm"
+    taskName.endsWith("Test") -> taskName.removeSuffix("Test")
+    else -> "unknown"
 }

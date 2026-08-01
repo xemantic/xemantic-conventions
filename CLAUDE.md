@@ -1,114 +1,66 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file captures only what cannot be inferred from the codebase itself.
 
-## Project Overview
+## Rules for editing this file
 
-This is a Gradle plugin (`com.xemantic.gradle.xemantic-conventions`) that centralizes build conventions for Xemantic's Kotlin projects. It handles multiplatform library configuration, Maven Central publishing, signing, documentation generation, and release announcements.
+Both developers and AI agents are expected to add entries as they encounter surprises.
 
-## Build Commands
+- **Add an entry** when you encounter something unexpected: a build quirk, a non-obvious constraint, a dependency gotcha, or any behavior that would surprise the next agent or developer.
+- **Add an entry** when a developer flags an anti-pattern produced by AI — describe the anti-pattern and the preferred alternative.
+- **Do not** add codebase overviews, directory listings, or anything discoverable by reading the source.
+- Keep entries concise: one line per lesson, grouped under a heading if a theme emerges.
 
-### Core build tasks
-```bash
-./gradlew build                    # Build and run tests
-./gradlew test                     # Run tests only
-./gradlew check                    # Run all checks including binary compatibility validation
-```
+## Conventions
 
-### Running a single test
-```bash
-./gradlew test --tests "ClassName.testMethodName"
-# Example: ./gradlew test --tests "UpdateVersionsAfterReleaseTest.shouldReplaceGradleDependencyVersion"
-```
+### Markdown authoring
 
-### Documentation
-```bash
-./gradlew dokkaGeneratePublicationHtml    # Generate Dokka HTML documentation
-```
+Markdown files use [semantic line breaks](https://sembr.org/):
+break a line after a sentence,
+and optionally at clause boundaries within a long sentence,
+so that diffs stay meaningful and reviewable.
 
-### Publishing and Release
-```bash
-./gradlew publish                                    # Publish to staging or GitHub Packages
-./gradlew -Pversion=X.Y.Z publish                    # Publish with specific version
-./gradlew jreleaserFullRelease                       # Deploy to Maven Central and announce
-./gradlew updateVersionsAfterRelease                 # Update versions after release (README.md and gradle.properties)
-```
+There is no column width limit —
+never reflow or hard-wrap a paragraph to fit some character count.
+Modern editors soft-wrap Markdown visually,
+see the [README](README.md#markdown-soft-wrapping-in-the-ide) for how to enable it.
 
-### Dependencies
-```bash
-./gradlew dependencyUpdates                          # Check for dependency updates (versions plugin)
-```
+## Known gotchas
 
-## Architecture
+- This plugin applies itself ("eating own dog food"),
+  but it resolves the *published* version pinned as `xemanticConventionsPlugin` in `gradle/libs.versions.toml` — not the local sources.
+  A convention added here has no effect on this project's own build until it is released and that version is bumped,
+  and a broken release can break this build.
+- Publishing and JReleaser tasks are run with `--no-configuration-cache` in CI;
+  run them the same way locally, otherwise they fail at configuration time.
+- Version numbers in `README.md` and `gradle.properties` are rewritten by the `updateVersionsAfterRelease` task and committed by CI after each release — do not hand-edit them.
+- The version catalog update plugin drops *trailing* comments in `libs.versions.toml` — `foo = "1.0" # why this version` is silently lost on `versionCatalogFormat`/`versionCatalogUpdate`,
+  while a comment on its own line above the entry survives.
+  Always put catalog comments on their own line.
+- The `kotlin` version follows the Gradle version rather than the newest Kotlin release, which is why it is `pin`ned in `versionCatalogUpdate` and bumped by hand together with the wrapper:
+  it has to match the version embedded by `kotlin-dsl`, otherwise that plugin warns that it "relies on features of Kotlin `x.y.z` that might work differently",
+  and it has to be recent enough to read the Kotlin metadata of the Gradle plugin APIs the conventions compile against, otherwise compilation fails with "was compiled with an incompatible version of Kotlin".
+  A Kotlin compiler reads metadata only one minor version ahead of itself, so those two bounds can genuinely conflict — they did on Gradle 9.2, which embedded Kotlin 2.2.
+- Upgrading the Gradle wrapper can fail `validatePlugins` with rules that did not exist before — 9.6 started requiring every task class to declare `@CacheableTask`, `@DisableCachingByDefault` or `@UntrackedTask`.
+  Run `./gradlew validatePlugins` after a wrapper bump.
+- These conventions are applied once, in the project owning the `xemantic { }` block, and reach the subprojects through `allprojects { }` — which makes two things easy to get wrong:
+  a `configureEach` callback registered from the root runs *before* the subproject's own plugins set their conventions,
+  so reading a task property there (`archiveBaseName.get()`) fails with "Cannot query the value ... because it has no value available" — pass providers instead of resolved values;
+  and inside `configureEach` the implicit `project` is the *task's* project, so `project.xemantic` throws "Extension with name 'xemantic' does not exist" for every subproject — take the configuration from the captured `XemanticConfiguration` instead.
+- The `publishToMavenCentral` task is registered by `com.vanniktech.maven.publish` only when Maven Central publishing is enabled through the `mavenCentralPublishing` or `SONATYPE_HOST` Gradle property,
+  so it does not exist in a plain local build — CI passes it, which is why release-only task wiring cannot be verified by simply running the task locally.
+- Do not switch `versionCatalogUpdate` to the built-in `VersionSelectors.STABLE`:
+  its `isStable` regex is `^[0-9,.v-]+(-r)?$`, so it treats every qualifier as unstable, including classifiers like `-jre` or `-android`, and silently *downgrades* such dependencies —
+  measured, it takes `guava = "30.0-jre"` down to `"23.0"`.
+  The default `PREFER_STABLE` is the safe choice; for keyword-based rules use `versionSelector { }`, which needs an explicit `import nl.littlerobots.vcu.plugin.versionSelector`
+  because `ModuleVersionSelector` is a plain interface rather than a `fun interface`, so the lambda is not SAM-converted.
+- Gradle has two `Jar` task types — `org.gradle.api.tasks.bundling.Jar` *extends* `org.gradle.jvm.tasks.Jar`.
+  Always match on the `jvm.tasks` supertype in `withType<Jar>()`, otherwise the match silently skips jars registered by other plugins:
+  the javadoc jar of `com.vanniktech.maven.publish` extends the supertype, so matching on `bundling.Jar` published it without the manifest attributes and without `META-INF/LICENSE`.
+- Never invoke `apiDump` together with `build` or `check` in a single Gradle run:
+  `apiCheck` reads the file `apiDump` writes, and Gradle fails the run on the undeclared task dependency.
+  Run `./gradlew apiDump` first, then `./gradlew build`.
 
-### Plugin Structure
+## Anti-patterns to avoid
 
-The plugin (`XemanticConventionsPlugin`) creates an `xemantic` extension (configured in `build.gradle.kts`) that requires:
-- `description`: Project description
-- `inceptionYear`: Year the project started
-- `license`: One of `License.APACHE`, `License.GPL`, or `License.LGPL`
-- At least one developer via `developer(id, name, email)`
-
-Optional configuration:
-- `vendor` (default: "Xemantic")
-- `gitHubAccount` (default: "xemantic")
-
-The plugin automatically configures:
-1. **JAR Manifests** (`Jars.kt`): Populates implementation metadata, build time, license info
-2. **Test Logging** (`TestLogging.kt`): Configured for AI-friendly output - only logs SKIPPED and FAILED tests with full stack traces
-3. **Publishing** (`Publishing.kt`): Configures POM with organization, SCM, CI, issue management (only when `maven-publish` plugin is applied)
-4. **Signing**: Uses in-memory PGP keys from project properties (only when `signing` plugin is applied)
-5. **Workarounds** (`Workarounds.kt`): Fixes for KMP signing issues and JReleaser task ordering
-
-**Multimodule Support**: The plugin applies conventions to all subprojects via `allprojects {}`. Publishing and signing configurations are conditionally applied using `pluginManager.withPlugin()` checks, so the plugin works correctly even when applied only to the root project - submodules that don't have `maven-publish` or `signing` plugins applied are safely skipped.
-
-### Key Components
-
-- **XemanticConfiguration.kt**: Main DSL configuration class, provides computed properties like `copyright`, `buildTime`, `releasePageUrl`, `isReleaseBuild`
-- **Publishing.kt**: Maven POM configuration with GitHub/Maven Central metadata
-- **UpdateVersionsAfterRelease.kt**: Task to automatically update dependency versions in README.md and bump version in gradle.properties to next snapshot
-- **License.kt**: Enum of supported open-source licenses with SPDX identifiers
-
-### Publishing Flow
-
-The plugin supports two publishing modes:
-1. **Snapshot builds** (`version` ends with `-SNAPSHOT`): Publish to GitHub Packages
-2. **Release builds**: Publish to staging directory (`build/staging-deploy`), then JReleaser deploys to Maven Central
-
-GitHub Actions workflow `build-release.yml` triggers on release publication and runs:
-```bash
-./gradlew -Pversion=$VERSION build sourcesJar signPluginMavenPublication publish jreleaserFullRelease
-```
-
-JReleaser is configured to:
-- Deploy to Maven Central (via `maven-central` deployer)
-- Announce to Discord, LinkedIn, and Bluesky
-- Skip GitHub release creation (handled via GitHub UI)
-
-### Required Secrets/Properties
-
-For publishing to work:
-- `githubActor` / `githubToken`: GitHub Packages authentication
-- `signingKey` / `signingPassword`: PGP signing credentials
-- `JRELEASER_*` environment variables: Maven Central and announcement platform credentials
-
-### Test Configuration
-
-Tests use JUnit Platform with:
-- `kotlin-test` for basic assertions
-- `xemantic-kotlin-test` for enhanced assertions
-- `power-assert` plugin configured for `kotlin.assert`, `com.xemantic.kotlin.test.assert`, and `com.xemantic.kotlin.test.have`
-
-Test output is optimized for AI agents (see `TestLogging.kt:27-29`): only failures and skips are logged to reduce noise.
-
-### Binary Compatibility
-
-The project uses `binary-compatibility-validator` plugin to ensure API stability. The `api` directory contains `.api` files tracking public API surfaces.
-
-## Code Conventions
-
-- Explicit API mode is enabled (`kotlin { explicitApi() }`)
-- All public APIs must have visibility modifiers
-- Internal implementation details go in `internal/` package
-- JVM target is controlled by `libs.versions.toml` (`java` version)
-- The plugin eats its own dog food: it applies itself in `build.gradle.kts:17`
+- Do not add content to this file that is already discoverable by reading the source or build scripts — that inflates context without adding signal, reducing AI agent task success rates (see [arxiv 2602.11988](https://arxiv.org/abs/2602.11988)).

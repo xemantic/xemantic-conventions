@@ -17,16 +17,13 @@
 package com.xemantic.gradle.conventions
 
 import com.xemantic.gradle.conventions.internal.configureJReleaserConventions
-import com.xemantic.gradle.conventions.internal.configureReportOnlyStableDependencyUpdates
 import com.xemantic.gradle.conventions.internal.configureTestReporting
 import com.xemantic.gradle.conventions.internal.populateJarManifest
 import org.gradle.api.GradleException
 import org.gradle.api.Project
-import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
-import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.testing.AbstractTestTask
+import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.withType
-import org.gradle.plugins.signing.Sign
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -56,9 +53,6 @@ public abstract class XemanticConfiguration @Inject constructor(
     public val releasePageUrl: String =
         "https://github.com/$gitHubAccount/${project.rootProject.name}/releases/tag/v${project.version}"
 
-
-    public var unstableVersionKeywords: List<String> = listOf("alpha", "beta", "rc")
-
     private fun validateParameters() {
         requireNotNull(description) { "description must be set" }
         requireNotNull(inceptionYear) { "inceptionYear must be set" }
@@ -75,18 +69,10 @@ public abstract class XemanticConfiguration @Inject constructor(
         }
     }
 
-    public fun applySignBeforePublishing() {
-        // Fix for Gradle 9.2.0 task dependency validation with gradle-plugin-publish
-        // The pluginMaven publication's signing task needs explicit dependency declaration
-        project.tasks.withType<PublishToMavenRepository>().configureEach {
-            dependsOn(project.tasks.withType<Sign>())
-        }
-    }
-
     public fun applyJarManifests() {
         project.allprojects {
             tasks.withType<Jar>().configureEach {
-                populateJarManifest(project)
+                populateJarManifest(this@XemanticConfiguration)
             }
         }
     }
@@ -99,7 +85,6 @@ public abstract class XemanticConfiguration @Inject constructor(
         }
     }
 
-
     public fun applyJReleaserConventions() {
         project.pluginManager.withPlugin("org.jreleaser") {
             project.configureJReleaserConventions(
@@ -108,20 +93,10 @@ public abstract class XemanticConfiguration @Inject constructor(
         }
     }
 
-    public fun applyReportOnlyStableDependencyUpdates() {
-        project.pluginManager.withPlugin("com.github.ben-manes.versions") {
-            project.configureReportOnlyStableDependencyUpdates(
-                config = this@XemanticConfiguration
-            )
-        }
-    }
-
     public fun applyAllConventions() {
-        applySignBeforePublishing()
         applyJarManifests()
         applyAxTestReporting()
         applyJReleaserConventions()
-        applyReportOnlyStableDependencyUpdates()
     }
 
 }

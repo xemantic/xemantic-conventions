@@ -1,27 +1,27 @@
 [versions]
-java = "17"
-kotlin = "2.2.20" # the highest version supported by the plugin at the moment
-
-xemanticKotlinTest = "1.15.2"
-kotlinSemver = "3.0.0"
-
-versionsPlugin = "0.53.0"
-dokkaPlugin = "2.1.0"
-jreleaserPlugin = "1.20.0" # version 1.21.0 has a critical gradle bug
+# libraries
+javaTarget = "17"
+# the highest version supported by the plugin at the moment
+kotlin = "2.3.21"
+xemanticKotlinTest = "1.17.5"
+kotlinSemver = "3.1.0"
+# plugins
+versionCatalogUpdatePlugin = "1.1.0"
+dokkaPlugin = "2.2.0"
+jreleaserPlugin = "1.25.0"
 binaryCompatibilityValidatorPlugin = "0.18.1"
-mavenPublishPlugin = "0.35.0"
-xemanticConventionsPlugin = "0.6.7"
+mavenPublishPlugin = "0.37.0"
+xemanticConventionsPlugin = "0.6.8"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 xemantic-kotlin-test = { module = "com.xemantic.kotlin:xemantic-kotlin-test", version.ref = "xemanticKotlinTest" }
 kotlin-semver = { module = "io.github.z4kn4fein:semver", version.ref = "kotlinSemver" }
 jreleaser = { module = "org.jreleaser:jreleaser-gradle-plugin", version.ref = "jreleaserPlugin" }
-verplugin = { module = "com.github.ben-manes.versions:com.github.ben-manes.versions.gradle.plugin", version.ref = "versionsPlugin" }
 
 [plugins]
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokkaPlugin" }
-versions = { id = "com.github.ben-manes.versions", version.ref = "versionsPlugin" }
+version-catalog-update = { id = "nl.littlerobots.version-catalog-update", version.ref = "versionCatalogUpdatePlugin" }
 binary-compatibility-validator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "binaryCompatibilityValidatorPlugin" }
 jreleaser = { id = "org.jreleaser", version.ref = "jreleaserPlugin" }
 power-assert = { id = "org.jetbrains.kotlin.plugin.power-assert", version.ref = "kotlin" }
