@@ -123,7 +123,7 @@ mavenPublishing {
         name = rootProject.name
         description = xemantic.description
         inceptionYear = xemantic.inceptionYear.toString()
-        url = "https://github.com/${xemantic.gitHubAccount}}/${rootProject.name}"
+        url = "https://github.com/${xemantic.gitHubAccount}/${rootProject.name}"
 
         organization {
             name = xemantic.organization
