@@ -57,6 +57,9 @@ see the [README](README.md#markdown-soft-wrapping-in-the-ide) for how to enable 
 - Gradle has two `Jar` task types — `org.gradle.api.tasks.bundling.Jar` *extends* `org.gradle.jvm.tasks.Jar`.
   Always match on the `jvm.tasks` supertype in `withType<Jar>()`, otherwise the match silently skips jars registered by other plugins:
   the javadoc jar of `com.vanniktech.maven.publish` extends the supertype, so matching on `bundling.Jar` published it without the manifest attributes and without `META-INF/LICENSE`.
+- The `xemantic` extension is instantiated while the plugin is being *applied*, so anything in `XemanticConfiguration` derived from its own properties or from `project.version` must be a computed property (`get() = …`), never an initialiser —
+  an initialiser captures the defaults, a still-null `inceptionYear` and an `unspecified` version, and silently keeps them while accepting the `xemantic { }` overrides without effect (issue #83).
+- Nullability is not part of a JVM signature, so widening a property from `String` to `String?` leaves `api/xemantic-conventions.api` unchanged — the `.api` dump is not a safety net for Kotlin-metadata-only ABI changes.
 - Never invoke `apiDump` together with `build` or `check` in a single Gradle run:
   `apiCheck` reads the file `apiDump` writes, and Gradle fails the run on the undeclared task dependency.
   Run `./gradlew apiDump` first, then `./gradlew build`.

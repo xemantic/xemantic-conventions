@@ -24,14 +24,12 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.withType
-import java.time.LocalDateTime
+import java.time.LocalDate
 import javax.inject.Inject
 
 public abstract class XemanticConfiguration @Inject constructor(
     private val project: Project
 ) {
-
-    private val now = LocalDateTime.now()
 
     public var description: String? = null
 
@@ -43,15 +41,41 @@ public abstract class XemanticConfiguration @Inject constructor(
 
     public var gitHubAccount: String = "xemantic"
 
-    public val url: String = "https://github.com/$gitHubAccount/${project.rootProject.name}"
+    /*
+     * Everything derived from the properties above must be a computed property, never an
+     * initializer. The extension is instantiated while the plugin is being applied, which is
+     * before the build script's `xemantic { }` block assigns anything, and before a build
+     * script assigning `version` has run. An initializer would capture the defaults - a still
+     * null `inceptionYear` and an `unspecified` project version - and silently keep them,
+     * accepting the `xemantic { }` overrides without effect. See issue #83.
+     */
 
-    public var copyright: String =
-            "© ${if (inceptionYear != now.year.toString()) "$inceptionYear-" else ""}${now.year} $organization"
+    public val url: String
+        get() = "https://github.com/$gitHubAccount/${project.rootProject.name}"
 
-    public val isReleaseBuild: Boolean = !(project.version as String).endsWith("-SNAPSHOT")
+    private var explicitCopyright: String? = null
 
-    public val releasePageUrl: String =
-        "https://github.com/$gitHubAccount/${project.rootProject.name}/releases/tag/v${project.version}"
+    /**
+     * The copyright notice, defaulting to `© <inceptionYear>-<currentYear> <organization>`,
+     * collapsed to a single year when the project was started in the current one.
+     *
+     * The current year is taken at read time, so that a long-lived Gradle daemon does not
+     * serve a stale notice across a New Year boundary.
+     */
+    public var copyright: String
+        get() = explicitCopyright ?: LocalDate.now().year.toString().let { currentYear ->
+            "© ${if (inceptionYear != currentYear) "$inceptionYear-" else ""}$currentYear $organization"
+        }
+        set(value) {
+            explicitCopyright = value
+        }
+
+    public val isReleaseBuild: Boolean
+        get() = !project.version.toString().endsWith("-SNAPSHOT")
+
+    public val releasePageUrl: String
+        get() = "https://github.com/$gitHubAccount/${project.rootProject.name}" +
+                "/releases/tag/v${project.version}"
 
     private fun validateParameters() {
         requireNotNull(description) { "description must be set" }
